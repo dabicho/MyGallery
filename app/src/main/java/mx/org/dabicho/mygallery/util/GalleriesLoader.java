@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import mx.org.dabicho.mygallery.model.ContentProviderGallery;
 import mx.org.dabicho.mygallery.model.Gallery;
 
 /**
@@ -43,7 +44,7 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
                 //ImageColumns.BUCKET_DISPLAY_NAME + " asc");
         lCursor.moveToFirst();
         while (!lCursor.isAfterLast()) {
-            Gallery lGallery = new Gallery();
+            Gallery lGallery = new ContentProviderGallery();
             lGallery.setName(lCursor.getString(0));
             lGallery.setId(lCursor.getLong(1));
             lGallery.setCount(lCursor.getLong(2));

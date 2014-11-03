@@ -1,15 +1,19 @@
 package mx.org.dabicho.mygallery.model;
 
 import android.graphics.Bitmap;
+import android.widget.ImageView;
 
 /**
  * Describe una galería de imágenes
  */
-public class Gallery {
+public abstract class Gallery {
     private String mName;
     private long mCount;
     private long mId;
-    private Bitmap mBitmap;
+
+    private Cover mCover;
+
+    public abstract GalleryType getGalleryType();
 
     /**
      * @return el nombre de la galería
@@ -53,11 +57,37 @@ public class Gallery {
         mId = id;
     }
 
-    public Bitmap getBitmap() {
-        return mBitmap;
+    /**
+     *
+     * @param cover constructor de cubierta
+     */
+    public void setCover(Cover cover) {
+        mCover = cover;
     }
 
-    public void setBitmap(Bitmap bitmap) {
-        mBitmap = bitmap;
+    public boolean hasCover(){
+        return mCover!=null;
     }
+
+    /**
+     * Ordena a la cubierta que dibuje el ImageView. Si no tiene cubierta, regresa false
+     * @param imageView
+     * @return false si no tiene cubierta
+     */
+    public boolean paintCover(ImageView imageView){
+        if(mCover!=null)
+            return mCover.paintCover(imageView);
+        else
+            return false;
+    }
+
+
+
+
+}
+
+enum GalleryType {
+    CONTENT_PROVIDER,
+    ALBUM,
+    QUERY
 }

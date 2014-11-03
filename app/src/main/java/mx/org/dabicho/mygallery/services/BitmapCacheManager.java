@@ -2,7 +2,10 @@ package mx.org.dabicho.mygallery.services;
 
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
+
+import static android.util.Log.i;
 
 
 /**
@@ -20,6 +23,7 @@ public class BitmapCacheManager {
             @Override
             protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
                 super.entryRemoved(evicted, key, oldValue, newValue);
+                i(TAG, "entryRemoved: "+key);
                 oldValue.recycle();
             }
         };
