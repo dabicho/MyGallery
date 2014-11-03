@@ -1,14 +1,22 @@
 package mx.org.dabicho.mygallery;
 
+import mx.org.dabicho.mygallery.model.Gallery;
+import mx.org.dabicho.mygallery.model.IdConstants;
+import mx.org.dabicho.mygallery.util.GalleriesLoader;
 import mx.org.dabicho.mygallery.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.util.List;
 
 
 /**
@@ -18,6 +26,7 @@ import android.view.View;
  * @see SystemUiHider
  */
 public class GalleryManagerActivity extends Activity {
+    private static final String TAG =  "GalleryManagerActivity";
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -46,9 +55,15 @@ public class GalleryManagerActivity extends Activity {
      */
     private SystemUiHider mSystemUiHider;
 
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         setContentView(R.layout.activity_gallery_manager);
 
