@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+import mx.org.dabicho.mygallery.R;
 import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 
 import static android.util.Log.i;
@@ -31,16 +32,16 @@ public class SimpleCover extends Cover {
     public boolean paintCover(ImageView imageView) {
         Bitmap lBitmap;
         if (mId == null || (lBitmap = BitmapCacheManager.getInstance().get(mId)) == null) {
-            i(TAG, "paintCover: Sin Cache");
+            i(TAG, "paintCover: Sin Cache ");
             imageView.getHeight();
             imageView.getWidth();
-            imageView.setImageResource(android.R.drawable.alert_dark_frame);
+            imageView.setImageResource(R.drawable.brian_up_close);
             return false;
 
         } else
 
         {
-            i(TAG, "paintCover: En Cache");
+            i(TAG, "paintCover: En Cache "+lBitmap.isRecycled());
             imageView.setImageBitmap(lBitmap);
             return true;
         }

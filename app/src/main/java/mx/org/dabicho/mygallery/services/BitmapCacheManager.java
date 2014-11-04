@@ -19,12 +19,12 @@ public class BitmapCacheManager {
     private LruCache<String, Bitmap> lruCache;
 
     private BitmapCacheManager() {
-        lruCache = new LruCache<String, Bitmap>(250){
+        lruCache = new LruCache<String, Bitmap>(6){
             @Override
             protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
                 super.entryRemoved(evicted, key, oldValue, newValue);
                 i(TAG, "entryRemoved: "+key);
-                oldValue.recycle();
+                //oldValue.recycle();
             }
         };
     }
@@ -37,10 +37,12 @@ public class BitmapCacheManager {
     }
 
     public void put(String key, Bitmap value) {
+        Log.i(TAG,"put: Bitmap is recycled: "+value.isRecycled());
         lruCache.put(key, value);
     }
 
     public Bitmap get(String key) {
+
         return lruCache.get(key);
     }
 

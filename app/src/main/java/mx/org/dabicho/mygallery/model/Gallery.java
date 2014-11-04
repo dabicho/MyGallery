@@ -1,12 +1,14 @@
 package mx.org.dabicho.mygallery.model;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 /**
  * Describe una galería de imágenes
  */
 public abstract class Gallery {
+    private static final String TAG =  "Gallery";
     private String mName;
     private long mCount;
     private long mId;
@@ -75,10 +77,14 @@ public abstract class Gallery {
      * @return false si no tiene cubierta
      */
     public boolean paintCover(ImageView imageView){
-        if(mCover!=null)
+        if(mCover!=null) {
+            Log.i(TAG,"paintCover: Cover");
             return mCover.paintCover(imageView);
-        else
+        }
+        else {
+            Log.i(TAG, "paintCover: no cover");
             return false;
+        }
     }
 
 
