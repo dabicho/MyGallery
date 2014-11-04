@@ -248,6 +248,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         private ImageView mImageView;
         private TextView mTextView;
         private long mId;
+        private Bitmap mBitmap;
 
         public ImageView getImageView() {
             return mImageView;
@@ -271,6 +272,14 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         public void setId(long id) {
             mId = id;
+        }
+
+        public void setBitmap(Bitmap bitmap){
+            if(mImageView!=null){
+                mImageView.setImageBitmap(bitmap);
+                mBitmap=bitmap;
+            }
+
         }
     }
 
@@ -328,6 +337,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             Log.i(TAG, "doInBackground: " + mId + " - " + mViewHolder.getId());
 
             BitmapFactory.Options lOptions = new BitmapFactory.Options();
+
             lOptions.inJustDecodeBounds = true;
             mBitmap = BitmapFactory.decodeFile(lCursor.getString(0), lOptions);
             lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions,
