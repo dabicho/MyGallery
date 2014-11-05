@@ -311,9 +311,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         protected void onPostExecute(Gallery galleries) {
 
             if(mId != mViewHolder.getId()) {
-
-                //mBitmap.recycle();
-
+                // Si ambos id son diferentes, no se debe actualizar la imagen
                 return;
             }
             // Validar y actualizar bitmap
@@ -325,14 +323,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             mViewHolder.setBitmap(mBitmap);
             BitmapCacheManager.getInstance().increaseRefCount(mBitmap);
             //mGalleries.get(mId).setBitmap(mBitmap);
-
             super.onPostExecute(galleries);
         }
 
         @Override
         protected Gallery doInBackground(Void... params) {
             // generar bitmap (y posiblemente agregarlo a algún cache)
-
+            // TODO se debe invocar un método de la cubierta
 
             String[] queryProjection = {
                     MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.TITLE};
@@ -349,24 +346,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             lCursor.moveToFirst();
             i(TAG, "doInBackground: " + mId + " - " + mViewHolder.getId());
 
-            BitmapFactory.Options lOptions = new BitmapFactory.Options();
-
-            lOptions.inJustDecodeBounds = true;
-            mBitmap = BitmapFactory.decodeFile(lCursor.getString(0), lOptions);
-            lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions,
+            mBitmap = ImageUtils.cropImageToCenter(lCursor.getString(0),
                     mViewHolder.getImageView().getWidth(),
                     mViewHolder.getImageView().getHeight());
-            lOptions.inJustDecodeBounds = false;
-            mBitmap = BitmapFactory.decodeFile(lCursor.getString(0), lOptions);
-            i(TAG, "doInBackground: bitmap size: " + mBitmap.getWidth() + " x " + mBitmap.getHeight());
 
             BitmapCacheManager.getInstance().put(lCursor.getString(0), mBitmap);
 
 
-            if(!mGalleries.get(mId).hasCover()) {
-                SimpleCover lSimpleCover = new SimpleCover(getActivity(), lCursor.getString(0));
-                mGalleries.get(mId).setCover(lSimpleCover);
-            }
             lCursor.close();
             return null;
         }

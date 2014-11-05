@@ -26,7 +26,6 @@ public class SimpleCover extends Cover {
     }
 
     /**
-     *
      * @param id el ID de la cubierta.
      */
     public void setId(String id) {
@@ -35,34 +34,34 @@ public class SimpleCover extends Cover {
 
     /**
      * Pinta la cubiera con el contenido del cache o con la plantilla
+     *
      * @param imageView
      * @return
      */
     @Override
     public boolean paintCover(GalleriesManagerFragment.GalleryItemViewHolder imageView) {
         Bitmap lBitmap;
+
         i(TAG, "paintCover: ");
         // Si tiene un bitmap, se debe de eliminar su referencia
-        if(imageView.getBitmap()!=null){
+        if(imageView.getBitmap() != null) {
             i(TAG, "paintCover: hay bitmap anterior");
             // Si el bitmap que se va a pintar y el del cache son el mismo, no se hace nada
-            if(mId!=null && imageView.getBitmap()==BitmapCacheManager.getInstance().get(mId)){
+            if(mId != null && imageView.getBitmap() == BitmapCacheManager.getInstance().get(mId)) {
                 return true;
             }
             // Se decrementa su referencia y elimina
             BitmapCacheManager.getInstance().decreaseRefCount(imageView.getBitmap());
             imageView.setBitmap(null);
         }
-        if (mId == null || (lBitmap = BitmapCacheManager.getInstance().get(mId)) == null) {
+        if(mId == null || (lBitmap = BitmapCacheManager.getInstance().get(mId)) == null) {
             // Si no hay id o no hay cache, se coloca la plantilla
-
+            Log.i(TAG,"paintCover: "+mId);
             imageView.getImageView().setImageResource(R.drawable.templates);
             return false;
 
-        } else
-
-        { // Se coloca el resultado del cache e incrementa su referencia
-
+        } else { // Se coloca el resultado del cache e incrementa su referencia
+            Log.i(TAG, "paintCover: Se pinta con cache");
             imageView.setBitmap(lBitmap);
             BitmapCacheManager.getInstance().increaseRefCount(lBitmap);
             return true;
