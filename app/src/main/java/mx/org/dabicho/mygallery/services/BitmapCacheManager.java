@@ -106,10 +106,11 @@ public class BitmapCacheManager {
                 mNotCachedBitmaps.remove(bitmap);
                 mBitmapRefCountMap.remove(bitmap);
                 bitmap.recycle();
+
                 System.gc();
                 i(TAG, "decreaseRefCount: reciclado");
             }
-            i(TAG, "decreaseRefCount: "+bitmap+" - "+mBitmapRefCountMap.get(bitmap));
+            i(TAG, "decreaseRefCount: "+mBitmapRefCountMap.get(bitmap));
         }
 
     }
