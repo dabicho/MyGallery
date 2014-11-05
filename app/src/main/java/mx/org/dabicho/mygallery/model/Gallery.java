@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
 
+import mx.org.dabicho.mygallery.GalleriesManagerFragment;
+
 /**
  * Describe una galería de imágenes
  */
@@ -76,7 +78,7 @@ public abstract class Gallery {
      * @param imageView
      * @return false si no tiene cubierta
      */
-    public boolean paintCover(ImageView imageView){
+    public boolean paintCover(GalleriesManagerFragment.GalleryItemViewHolder imageView){
         if(mCover!=null) {
             Log.i(TAG,"paintCover: Cover");
             return mCover.paintCover(imageView);

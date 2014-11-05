@@ -11,6 +11,7 @@ import java.util.List;
 
 import mx.org.dabicho.mygallery.model.ContentProviderGallery;
 import mx.org.dabicho.mygallery.model.Gallery;
+import mx.org.dabicho.mygallery.model.SimpleCover;
 
 /**
  * Cargador de galerias. Crea la lista de galerías disponibles
@@ -40,7 +41,7 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
         Cursor lCursor = mContext.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 galleryQueryProjection, "1=1) group by ( " + ImageColumns.BUCKET_ID, null,
-                null);
+                ImageColumns.BUCKET_DISPLAY_NAME + " asc");
                 //ImageColumns.BUCKET_DISPLAY_NAME + " asc");
         lCursor.moveToFirst();
         while (!lCursor.isAfterLast()) {
@@ -48,6 +49,7 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
             lGallery.setName(lCursor.getString(0));
             lGallery.setId(lCursor.getLong(1));
             lGallery.setCount(lCursor.getLong(2));
+            lGallery.setCover(new SimpleCover(mContext,null));
             galerias.add(lGallery);
             Log.i(TAG, "loadInBackground: " + lGallery.getName());
             lCursor.moveToNext();

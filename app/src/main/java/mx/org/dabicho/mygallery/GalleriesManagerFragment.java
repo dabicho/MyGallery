@@ -34,6 +34,8 @@ import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.GalleriesLoader;
 import mx.org.dabicho.mygallery.util.ImageUtils;
 
+import static android.util.Log.i;
+
 /**
  * A fragment representing a list of Galleries.
  * <p/>
@@ -90,7 +92,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate: ");
+        i(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
 
 
@@ -109,7 +111,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                Log.i(TAG, "getView: Asking for view " + position);
+                i(TAG, "getView: Asking for view " + position);
                 GalleryItemViewHolder lViewHolder;
                 if(convertView == null) {
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
@@ -126,13 +128,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
                 lViewHolder.getTextView().setText(getItem(position).getName() + ": (" + getItem
                         (position).getCount() + ")");
-                if(!getItem(position).paintCover(lViewHolder.getImageView())) {
-                    Log.i(TAG, "getView: task");
-                    lViewHolder.getImageView().setImageResource(R.drawable.brian_up_close);
+                if(!getItem(position).paintCover(lViewHolder)) {
+                    i(TAG, "getView: task");
+                    //lViewHolder.getImageView().setImageResource(R.drawable.brian_up_close);
                     new GalleryItemTask(position, lViewHolder)
                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
                 }
-                Log.i(TAG, "getView: return");
+                i(TAG, "getView: return");
                 return convertView;
             }
         };
@@ -189,7 +191,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
      */
     private void prepareGalleryLoaders() {
         LoaderManager lm = getLoaderManager();
-        Log.i(TAG, "prepareGalleryLoaders: Iniciando loader");
+        i(TAG, "prepareGalleryLoaders: Iniciando loader");
         lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleryLoaderCallbacks());
     }
 
@@ -213,7 +215,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                 mGalleries = new ArrayList<Gallery>();
             mGalleries.addAll(data);
             for(Gallery lGallery : data) {
-                Log.i(TAG, "onLoadFinished: " + lGallery.getName());
+                i(TAG, "onLoadFinished: " + lGallery.getName());
             }
 
             mAdapter.notifyDataSetChanged();
@@ -244,7 +246,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
      * Un patrón "holder". Esta clase contiene los elementos que se van a modificar y se relacionan
      * con el id
      */
-    private class GalleryItemViewHolder {
+    public class GalleryItemViewHolder {
         private ImageView mImageView;
         private TextView mTextView;
         private long mId;
@@ -275,11 +277,20 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         }
 
         public void setBitmap(Bitmap bitmap){
+            if(bitmap==null){
+                i(TAG, "setBitmap: colocando bitmap null");
+            }
+            if(mBitmap!=null)
+                i(TAG, "setBitmap: bitmap anterior no nulo");
             if(mImageView!=null){
                 mImageView.setImageBitmap(bitmap);
                 mBitmap=bitmap;
             }
 
+        }
+
+        public Bitmap getBitmap() {
+            return mBitmap;
         }
     }
 
@@ -298,18 +309,21 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         @Override
         protected void onPostExecute(Gallery galleries) {
-            Log.i(TAG, "onPostExecute: Size: " + mViewHolder.getImageView().getWidth() + " x " +
-                    mViewHolder.getImageView().getHeight());
+
             if(mId != mViewHolder.getId()) {
-                Log.i(TAG, "onPostExecute: IDs difieren!!! " + mId + " - " + mViewHolder.getId());
+
                 //mBitmap.recycle();
-                mBitmap = null;
+
                 return;
             }
             // Validar y actualizar bitmap
 
-
-            mViewHolder.getImageView().setImageBitmap(mBitmap);
+            if(mViewHolder.getBitmap()!=null) {
+                i(TAG, "onPostExecute: Hay bitmap anterior");
+                BitmapCacheManager.getInstance().decreaseRefCount(mViewHolder.getBitmap());
+            }
+            mViewHolder.setBitmap(mBitmap);
+            BitmapCacheManager.getInstance().increaseRefCount(mBitmap);
             //mGalleries.get(mId).setBitmap(mBitmap);
 
             super.onPostExecute(galleries);
@@ -329,12 +343,11 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                     selectionArgs, MediaStore.Images.ImageColumns.TITLE);
             lCursor.moveToFirst();
             while(!lCursor.isAfterLast()) {
-                //Log.i(TAG,"doInBackground: "+mGalleries.get(mId).getName()+" - "+lCursor.getString
-                //        (1)+" - "+ lCursor.getString(0));
+
                 lCursor.moveToNext();
             }
             lCursor.moveToFirst();
-            Log.i(TAG, "doInBackground: " + mId + " - " + mViewHolder.getId());
+            i(TAG, "doInBackground: " + mId + " - " + mViewHolder.getId());
 
             BitmapFactory.Options lOptions = new BitmapFactory.Options();
 
@@ -345,13 +358,9 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                     mViewHolder.getImageView().getHeight());
             lOptions.inJustDecodeBounds = false;
             mBitmap = BitmapFactory.decodeFile(lCursor.getString(0), lOptions);
-            Log.i(TAG,"doInBackground: bitmap size: "+mBitmap.getWidth()+" x "+mBitmap.getHeight());
+            i(TAG, "doInBackground: bitmap size: " + mBitmap.getWidth() + " x " + mBitmap.getHeight());
+
             BitmapCacheManager.getInstance().put(lCursor.getString(0), mBitmap);
-
-
-            //if(mGalleries.get(mId).getBitmap()!=null)
-            //    mGalleries.get(mId).getBitmap().recycle();
-            //mGalleries.get(mId).setBitmap(mBitmap);
 
 
             if(!mGalleries.get(mId).hasCover()) {

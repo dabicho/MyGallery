@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
+import mx.org.dabicho.mygallery.GalleriesManagerFragment;
+
 /**
  * Cubiertas para las galerías
  */
@@ -13,5 +15,5 @@ public abstract class Cover {
     public Cover(Context context) {
         mContext=context;
     }
-    public abstract  boolean paintCover(ImageView imageView);
+    public abstract  boolean paintCover(GalleriesManagerFragment.GalleryItemViewHolder imageView);
 }
