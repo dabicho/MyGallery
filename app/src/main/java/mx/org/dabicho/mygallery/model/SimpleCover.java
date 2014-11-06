@@ -9,13 +9,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
@@ -26,6 +30,7 @@ import mx.org.dabicho.mygallery.R;
 import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.ImageUtils;
 
+import static android.util.Log.e;
 import static android.util.Log.i;
 
 /**
@@ -40,8 +45,9 @@ public class SimpleCover extends Cover {
     public SimpleCover(Context context, String id, long galleryId) {
         super(context);
 
-        mId = id;
+
         mGalleryId = galleryId;
+        mId=creaNombreArchivo();
 
     }
 
@@ -49,7 +55,7 @@ public class SimpleCover extends Cover {
      * @param id el ID de la cubierta.
      */
     public void setId(String id) {
-        mId = id;
+        mId=creaNombreArchivo();
     }
 
     /**
@@ -65,7 +71,7 @@ public class SimpleCover extends Cover {
         i(TAG, "paintCover: ");
         // Si tiene un bitmap, se debe de eliminar su referencia
         if (galleryItemViewHolder.getBitmap() != null) {
-            i(TAG, "paintCover: hay bitmap anterior");
+            i(TAG, "SimpleCover: hay bitmap anterior");
             // Si el bitmap que se va a pintar y el del cache son el mismo, no se hace nada
             if (mId != null && galleryItemViewHolder.getBitmap() == BitmapCacheManager.getInstance().get(mId)) {
                 return true;
@@ -76,14 +82,14 @@ public class SimpleCover extends Cover {
         }
         if (mId == null || (lBitmap = BitmapCacheManager.getInstance().get(mId)) == null) {
             // Si no hay id o no hay cache, se coloca la plantilla
-            i(TAG, "paintCover: mId " + mId + " Tam: " + galleryItemViewHolder.getImageView().getWidth()
+            i(TAG, "SimpleCover: mId " + mId + " Tam: " + galleryItemViewHolder.getImageView().getWidth()
                     + " x " + galleryItemViewHolder.getImageView().getHeight());
             galleryItemViewHolder.getImageView().setImageResource(R.drawable.templates);
 
             return false;
 
         } else { // Se coloca el resultado del cache e incrementa su referencia
-            i(TAG, "paintCover: Se pinta con cache");
+            i(TAG, "SimpleCover: Se pinta con cache");
             galleryItemViewHolder.setBitmap(lBitmap);
             BitmapCacheManager.getInstance().increaseRefCount(lBitmap);
             return true;
@@ -95,8 +101,18 @@ public class SimpleCover extends Cover {
     public Bitmap generateCover(int preferredWidth, int preferredHeight) {
         // TODO guardar el bitmap como jpg al terminar en memoria interna
         // TODO buscar el bitmap jpg al iniciar
-        i(TAG, "generateCover: size: " + preferredWidth + " x " + preferredHeight);
         Bitmap lBitmap;
+        try {
+            FileInputStream fis = mContext.openFileInput(creaNombreArchivo());
+            lBitmap=BitmapFactory.decodeStream(fis);
+            BitmapCacheManager.getInstance().put(creaNombreArchivo(), lBitmap);
+            i(TAG, "generateCover: Se leyó archivo y se agrego a cache como: "+creaNombreArchivo());
+            return lBitmap;
+        } catch (FileNotFoundException fnfe) {
+            // NADA
+        }
+        i(TAG, "generateCover: size: " + preferredWidth + " x " + preferredHeight);
+
         String[] queryProjection = {
                 MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.TITLE};
         String[] selectionArgs = new String[]{String.valueOf(mGalleryId)};
@@ -106,7 +122,7 @@ public class SimpleCover extends Cover {
                 selectionArgs, MediaStore.Images.ImageColumns.TITLE);
 
         lCursor.moveToFirst();
-        i(TAG, "generateCover: FILE0: " + lCursor.getString(0));
+        i(TAG, "generateCover: FILE0: " + Thread.currentThread().getId() + " " + lCursor.getString(0));
         mId = lCursor.getString(0);
 
         i(TAG, "generateCover: gID " + mGalleryId + " : " + lCursor.getCount());
@@ -116,7 +132,7 @@ public class SimpleCover extends Cover {
         if (lCursor.getString(0) == null || lBitmap == null) {
             i(TAG, "generateCover: nulos: " + lCursor.getString(0) + "-" + lBitmap);
         } else
-            BitmapCacheManager.getInstance().put(lCursor.getString(0), lBitmap);
+            BitmapCacheManager.getInstance().put(creaNombreArchivo(), lBitmap);
 
         lCursor.close();
         return lBitmap;
@@ -126,10 +142,10 @@ public class SimpleCover extends Cover {
      * Este método abre la imágen source y realiza un recorte del centro que se asemeje al center
      * crop de ImageView
      *
-     * @param source
-     * @param width
-     * @param height
-     * @return
+     * @param source el path a la imagen original
+     * @param width  el ancho deseado de recorte
+     * @param height el alto deseado de recorte
+     * @return una imagen de width x height que representa un segmento central de la imagen source
      */
     public Bitmap generateSimpleCoverBitmap(Resources resources, String source, int width, int height) {
         if (source == null || width <= 0 || height <= 0)
@@ -144,11 +160,31 @@ public class SimpleCover extends Cover {
         lOptions.inJustDecodeBounds = true;
 
         BitmapFactory.decodeFile(source, lOptions);
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(source);
+            i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " orientación: " + exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL));
+            switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                case ExifInterface.ORIENTATION_TRANSPOSE:
+                case ExifInterface.ORIENTATION_TRANSVERSE:
+                    lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height, true);
+                    break;
+                default:
+                    lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height, false);
+            }
+        } catch (IOException e) {
+            e(TAG, "generateSimpleCoverBitmap: No fué posible leer los metadatos exif de el archivo",
+                    e);
+            lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height);
+        }
         i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lOptions.outWidth + "" +
                 " x" + " " + lOptions.outHeight);
-        lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height);
+
         lOptions.inJustDecodeBounds = false;
-        lBitmap = BitmapFactory.decodeFile(source, lOptions);
+        lBitmap = ImageUtils.rotateBitmap(exif, BitmapFactory.decodeFile(source, lOptions));
+
         i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lBitmap.getWidth() +
                 " x " +
                 lBitmap.getHeight() + " " + lOptions.inSampleSize);
@@ -167,25 +203,47 @@ public class SimpleCover extends Cover {
         if (y < 0)
             y = 0;
         Bitmap croppedBitmap = Bitmap.createBitmap(lBitmap, x, y, dWidth, dHeight);
-        croppedBitmap = getMutableBitmap(mContext.getCacheDir().toString(), croppedBitmap);
+        lBitmap.recycle();
+        lBitmap=Bitmap.createScaledBitmap(croppedBitmap,width,height,false);
+        croppedBitmap.recycle();
+        croppedBitmap = getMutableBitmap(mContext.getCacheDir().toString(), lBitmap);
+
         Canvas canvas = new Canvas(croppedBitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.FILL_AND_STROKE);
         canvas.drawRect(0, 0, 100, 100, paint);
 
-        //lBitmap.recycle();
+
 
         System.gc();
         i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + croppedBitmap.getWidth()
                 + " x " +
                 "" + croppedBitmap
                 .getHeight());
+        try {
+            FileOutputStream fos = mContext.openFileOutput(creaNombreArchivo(), 0);
+            croppedBitmap.compress(Bitmap.CompressFormat.JPEG,80,fos);
+            fos.close();
+        } catch (FileNotFoundException fnf) {
+            e(TAG, "generateSimpleCoverBitmap: No fué posible crear el archivo", fnf );
+        } catch (IOException ioe) {
+            e(TAG, "generateSimpleCoverBitmap: No fué posible cerrar el archivo",ioe );
+        }
+
         return croppedBitmap;
+    }
+
+    private String creaNombreArchivo(){
+        return CoverType.SimpleCover.name()+"."+
+                mGalleryId+".png";
     }
 
 
     /**
+     * método estático para generar un bitmap mutable a partir de uno inmutable para poder editarlo.
+     * Escribe a disco en el directorio indicado en dir y recicla el bitmap inmutable
+     *
      * @param dir
      * @param inmutableBitmap
      * @return
