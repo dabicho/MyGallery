@@ -1,20 +1,31 @@
 package mx.org.dabicho.mygallery.model;
 
 import android.graphics.Bitmap;
-import android.util.Log;
-import android.widget.ImageView;
 
 import mx.org.dabicho.mygallery.GalleriesManagerFragment;
+
+import static android.util.Log.i;
 
 /**
  * Describe una galería de imágenes
  */
 public abstract class Gallery {
     private static final String TAG =  "Gallery";
+    /**
+     * Nombre de la galeria
+     */
     private String mName;
+    /**
+     * Cuantas imagenes componen esta galeria
+     */
     private long mCount;
-    private long mId;
-
+    /**
+     * id de la galeria
+     */
+    private long mGalleryId;
+    /**
+     * Cubierta de la galeria
+     */
     private Cover mCover;
 
     public abstract GalleryType getGalleryType();
@@ -50,15 +61,15 @@ public abstract class Gallery {
     /**
      * @return id de la galería
      */
-    public long getId() {
-        return mId;
+    public long getGalleryId() {
+        return mGalleryId;
     }
 
     /**
-     * @param id de la galería
+     * @param galleryId de la galería
      */
-    public void setId(long id) {
-        mId = id;
+    public void setGalleryId(long galleryId) {
+        mGalleryId = galleryId;
     }
 
     /**
@@ -79,17 +90,21 @@ public abstract class Gallery {
      * @return false si no tiene cubierta
      */
     public boolean paintCover(GalleriesManagerFragment.GalleryItemViewHolder imageView){
+
         if(mCover!=null) {
-            Log.i(TAG,"paintCover: Cover");
+            i(TAG, "paintCover: Cover");
             return mCover.paintCover(imageView);
         }
         else {
-            Log.i(TAG, "paintCover: no cover");
+            i(TAG, "paintCover: no cover");
             return false;
         }
     }
 
-
+    public Bitmap loadCover(int preferredWidth, int preferredHeight){
+        i(TAG, "loadCover: for "+mName+" size: "+preferredWidth+" x "+preferredHeight);
+        return mCover.generateCover(preferredWidth,preferredHeight);
+    }
 
 
 }

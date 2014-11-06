@@ -5,8 +5,6 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -29,7 +27,6 @@ import java.util.List;
 import mx.org.dabicho.mygallery.dummy.DummyContent;
 import mx.org.dabicho.mygallery.model.Gallery;
 import mx.org.dabicho.mygallery.model.IdConstants;
-import mx.org.dabicho.mygallery.model.SimpleCover;
 import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.GalleriesLoader;
 import mx.org.dabicho.mygallery.util.ImageUtils;
@@ -96,12 +93,12 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         super.onCreate(savedInstanceState);
 
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        if(mGalleries == null)
+        if (mGalleries == null)
             mGalleries = new ArrayList<Gallery>();
 
         // TODO: Change Adapter to display your content
@@ -113,9 +110,10 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             public View getView(int position, View convertView, ViewGroup parent) {
                 i(TAG, "getView: Asking for view " + position);
                 GalleryItemViewHolder lViewHolder;
-                if(convertView == null) {
+                if (convertView == null) {
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
                             .gallery_item, null);
+
                     lViewHolder = new GalleryItemViewHolder();
                     convertView.setTag(lViewHolder);
 
@@ -123,17 +121,24 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                     lViewHolder = (GalleryItemViewHolder) convertView.getTag();
                 }
                 lViewHolder.setId(position);
-                lViewHolder.setTextView((TextView) convertView.findViewById(R.id.gallery_infoTextView));
+
                 lViewHolder.setImageView((ImageView) convertView.findViewById(R.id.gallery_imageView));
+                lViewHolder.setTextView((TextView) convertView.findViewById(R.id.gallery_infoTextView));
+
 
                 lViewHolder.getTextView().setText(getItem(position).getName() + ": (" + getItem
                         (position).getCount() + ")");
-                if(!getItem(position).paintCover(lViewHolder)) {
-                    i(TAG, "getView: task");
+                if (!getItem(position).paintCover(lViewHolder)) {
+                    i(TAG, "getView: starting task for gallery " + getItem(position).getName()
+                            + " " + lViewHolder.getImageView().getWidth() + " x " +
+                            lViewHolder.getImageView().getHeight());
+                    i(TAG, "getView: Tam contenido: "+convertView.getWidth()+" x "+convertView.getHeight());
                     //lViewHolder.getImageView().setImageResource(R.drawable.brian_up_close);
                     new GalleryItemTask(position, lViewHolder)
                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+
                 }
+
                 i(TAG, "getView: return");
                 return convertView;
             }
@@ -163,7 +168,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -178,7 +183,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(null != mListener) {
+        if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
@@ -208,13 +213,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         @Override
         public void onLoadFinished(Loader<List<Gallery>> loader, List<Gallery> data) {
-            if(mGalleries != null) {
+            if (mGalleries != null) {
                 mGalleries.clear();
 
             } else
                 mGalleries = new ArrayList<Gallery>();
             mGalleries.addAll(data);
-            for(Gallery lGallery : data) {
+            for (Gallery lGallery : data) {
                 i(TAG, "onLoadFinished: " + lGallery.getName());
             }
 
@@ -276,15 +281,15 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             mId = id;
         }
 
-        public void setBitmap(Bitmap bitmap){
-            if(bitmap==null){
+        public void setBitmap(Bitmap bitmap) {
+            if (bitmap == null) {
                 i(TAG, "setBitmap: colocando bitmap null");
             }
-            if(mBitmap!=null)
+            if (mBitmap != null)
                 i(TAG, "setBitmap: bitmap anterior no nulo");
-            if(mImageView!=null){
+            if (mImageView != null) {
                 mImageView.setImageBitmap(bitmap);
-                mBitmap=bitmap;
+                mBitmap = bitmap;
             }
 
         }
@@ -295,9 +300,11 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     }
 
     private class GalleryItemTask extends AsyncTask<Void, Void, Gallery> {
-        private static final String TAG = "GalleryItemTask";
+        /**
+         * Posicion de la galería en la lista
+         */
         private int mId;
-        private String mCoverId;
+
         private GalleryItemViewHolder mViewHolder;
         private Bitmap mBitmap;
 
@@ -310,13 +317,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         @Override
         protected void onPostExecute(Gallery galleries) {
 
-            if(mId != mViewHolder.getId()) {
+            if (mId != mViewHolder.getId()) {
                 // Si ambos id son diferentes, no se debe actualizar la imagen
                 return;
             }
             // Validar y actualizar bitmap
 
-            if(mViewHolder.getBitmap()!=null) {
+            if (mViewHolder.getBitmap() != null) {
                 i(TAG, "onPostExecute: Hay bitmap anterior");
                 BitmapCacheManager.getInstance().decreaseRefCount(mViewHolder.getBitmap());
             }
@@ -328,32 +335,17 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         @Override
         protected Gallery doInBackground(Void... params) {
+            i(TAG, "doInBackground: for " + mGalleries.get(mId).getName());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e){
+
+            }
             // generar bitmap (y posiblemente agregarlo a algún cache)
             // TODO se debe invocar un método de la cubierta
 
-            String[] queryProjection = {
-                    MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.TITLE};
-            String[] selectionArgs = new String[]{String.valueOf(mGalleries.get(mId).getId())};
-            Cursor lCursor = getView().getContext().getContentResolver().query(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    queryProjection, MediaStore.Images.ImageColumns.BUCKET_ID + "= ?",
-                    selectionArgs, MediaStore.Images.ImageColumns.TITLE);
-            lCursor.moveToFirst();
-            while(!lCursor.isAfterLast()) {
-
-                lCursor.moveToNext();
-            }
-            lCursor.moveToFirst();
-            i(TAG, "doInBackground: " + mId + " - " + mViewHolder.getId());
-
-            mBitmap = ImageUtils.cropImageToCenter(lCursor.getString(0),
-                    mViewHolder.getImageView().getWidth(),
+            mBitmap=mGalleries.get(mId).loadCover(mViewHolder.getImageView().getWidth(),
                     mViewHolder.getImageView().getHeight());
-
-            BitmapCacheManager.getInstance().put(lCursor.getString(0), mBitmap);
-
-
-            lCursor.close();
             return null;
         }
     }

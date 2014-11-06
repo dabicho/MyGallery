@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Images.ImageColumns;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +46,11 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
         while (!lCursor.isAfterLast()) {
             Gallery lGallery = new ContentProviderGallery();
             lGallery.setName(lCursor.getString(0));
-            lGallery.setId(lCursor.getLong(1));
+            lGallery.setGalleryId(lCursor.getLong(1));
             lGallery.setCount(lCursor.getLong(2));
-            lGallery.setCover(new SimpleCover(mContext,null));
+            lGallery.setCover(new SimpleCover(mContext,null, lCursor.getLong(1)));
             galerias.add(lGallery);
-            Log.i(TAG, "loadInBackground: " + lGallery.getName());
+            //Log.i(TAG, "loadInBackground: " + lGallery.getName());
             lCursor.moveToNext();
         }
         lCursor.close();
