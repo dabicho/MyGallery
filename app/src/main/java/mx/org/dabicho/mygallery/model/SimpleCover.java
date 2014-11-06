@@ -167,7 +167,8 @@ public class SimpleCover extends Cover {
         if (y < 0)
             y = 0;
         Bitmap croppedBitmap = Bitmap.createBitmap(lBitmap, x, y, dWidth, dHeight);
-        croppedBitmap = getMutableBitmap(mContext.getCacheDir().toString(), croppedBitmap);
+        croppedBitmap = getMutableBitmap(mContext.getCacheDir().toString(),
+                Bitmap.createScaledBitmap(croppedBitmap,width, height, false));
         Canvas canvas = new Canvas(croppedBitmap);
         Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(Color.WHITE);
@@ -195,6 +196,7 @@ public class SimpleCover extends Cover {
         int width = inmutableBitmap.getWidth();
         int height = inmutableBitmap.getHeight();
         try {
+
             RandomAccessFile randomAccessFile = new RandomAccessFile(dir + "bitmap.raw", "rw");
             FileChannel channel = randomAccessFile.getChannel();
             MappedByteBuffer map = channel.map(FileChannel.MapMode.READ_WRITE, 0,

@@ -70,4 +70,6 @@ public abstract class FragmentActivity extends Activity {
             return rootView;
         }
     }
+
+
 }

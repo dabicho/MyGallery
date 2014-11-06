@@ -20,4 +20,6 @@ public class GalleriesManagerActivity extends FragmentActivity implements Galler
     public void onFragmentInteraction(String id) {
         Log.i(TAG, "onFragmentInteraction: id: "+id);
     }
+
+
 }
