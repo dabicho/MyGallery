@@ -34,4 +34,10 @@ public abstract class Cover {
      * @param preferredWidth el alto preferido por la vista
      */
     public abstract Bitmap generateCover(int preferredWidth, int preferredHeight);
+
 }
+
+enum CoverType {
+    SimpleCover;
+}
+
