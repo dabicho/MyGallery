@@ -28,7 +28,7 @@ public class BitmapCacheManager {
     private List<Bitmap> mNotCachedBitmaps =new ArrayList<Bitmap>();
 
     private BitmapCacheManager() {
-        lruCache = new LruCache<String, Bitmap>(8){
+        lruCache = new LruCache<String, Bitmap>(16){
             /**
              * Remover un bitmap del cache.
              * Si al removerlo sus referencias son 0, se recicla.
@@ -75,7 +75,7 @@ public class BitmapCacheManager {
      * @param value
      */
     public void put(String key, Bitmap value) {
-        i(TAG, "put: "+key+"-"+value);
+        i(TAG, "put: "+key+" - "+value);
         lruCache.put(key, value);
         mBitmapRefCountMap.put(value,0);
 

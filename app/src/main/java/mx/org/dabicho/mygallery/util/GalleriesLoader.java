@@ -36,6 +36,7 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
 
     @Override
     public List<Gallery> loadInBackground() {
+        RenderScriptUtils.getInstance(mContext);
         ArrayList<Gallery> galerias = new ArrayList<Gallery>();
         Cursor lCursor = mContext.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
