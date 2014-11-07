@@ -192,7 +192,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
 
     /**
-     * prepara e inicia los loaders
+     * Prepares and starts loaders
      */
     private void prepareGalleryLoaders() {
         LoaderManager lm = getLoaderManager();
@@ -201,8 +201,8 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     }
 
     /**
-     * Callbacks para cargar los datos de las galerías
-     * Al terminar de cargarlas, se crea el nuevo arreglo
+     * Callbacks to load galleries data
+     * At LoadFinished, a new list with the galleries is created
      */
     private class GalleryLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Gallery>> {
         @Override
