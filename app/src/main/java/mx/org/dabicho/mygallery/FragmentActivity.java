@@ -16,7 +16,7 @@ import mx.org.dabicho.mygallery.R;
 import mx.org.dabicho.mygallery.util.SystemUiHider;
 
 /**
- * An activity containing one single fragment
+ * An activity containing one single fragment and a drawer with another fragment
  */
 public abstract class FragmentActivity extends Activity {
     private View fragmentView;
