@@ -75,7 +75,7 @@ public class BitmapCacheManager {
      * @param value
      */
     public void put(String key, Bitmap value) {
-        i(TAG, "put: "+key+"-"+value);
+        i(TAG, "put: "+key+" - "+value);
         lruCache.put(key, value);
         mBitmapRefCountMap.put(value,0);
 

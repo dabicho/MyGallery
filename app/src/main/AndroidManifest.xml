@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    package="mx.org.dabicho.mygallery"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="mx.org.dabicho.mygallery" >
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
+        android:theme="@style/AppTheme" >
         <activity
-            android:name=".GalleryManagerActivity"
+            android:name="mx.org.dabicho.mygallery.GalleryManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme">
-
+            android:theme="@style/FullscreenTheme" >
         </activity>
         <activity
-            android:name=".GalleriesManagerActivity"
+            android:name="mx.org.dabicho.mygallery.GalleriesManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name"
-            >
+            android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="mx.org.dabicho.mygallery.DrawerExampleActivity"
+            android:label="@string/title_activity_drawer_example" >
         </activity>
     </application>
 
