@@ -11,11 +11,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static android.util.Log.i;
+import static android.util.Log.d;
 import static android.util.Log.v;
 
 
 /**
- * Sencillo administrador de bitmaps
+ * simple bitmap cache manager that also holds a count for external references to the bitmap to
+ * recycle them when no longer needed.
  */
 public class BitmapCacheManager {
     private static final String TAG = "BitmapCacheManager";
@@ -23,16 +25,21 @@ public class BitmapCacheManager {
     static private BitmapCacheManager cacheManager;
 
     private LruCache<String, Bitmap> lruCache;
-
+    /**
+     * A list to keep track of how many times is a bitmap referenced
+     */
     private Map<Bitmap, Integer> mBitmapRefCountMap=new ConcurrentHashMap<Bitmap, Integer>();
+    /**
+     * A list of bitmaps no longer on the cache
+     */
     private List<Bitmap> mNotCachedBitmaps =new ArrayList<Bitmap>();
 
     private BitmapCacheManager() {
         lruCache = new LruCache<String, Bitmap>(16){
             /**
-             * Remover un bitmap del cache.
-             * Si al removerlo sus referencias son 0, se recicla.
-             * De lo contrario, se agrega a la lista de bitmaps referenciados
+             * Remove a bitmap from the cache
+             * If its referenced 0 times, it should be recycled.
+             * Else, it is added to the referenced bitmaps list
              * @param evicted
              * @param key
              * @param oldValue
@@ -41,26 +48,23 @@ public class BitmapCacheManager {
             @Override
             protected synchronized void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
                 super.entryRemoved(evicted, key, oldValue, newValue);
-                i(TAG, "entryRemoved: "+lruCache.size()+" + "+mNotCachedBitmaps.size());
-                i(TAG, "entryRemoved: "+oldValue+" - "+mBitmapRefCountMap.get(oldValue));
+                d(TAG, "entryRemoved: "+lruCache.size()+" + "+mNotCachedBitmaps.size());
+                d(TAG, "entryRemoved: "+oldValue+" - "+mBitmapRefCountMap.get(oldValue));
                 if(mBitmapRefCountMap.get(oldValue)==0){
                     mBitmapRefCountMap.remove(oldValue);
                     oldValue.recycle();
                     System.gc();
-                    i(TAG, "entryRemoved: reciclado "+oldValue);
+                    d(TAG, "entryRemoved: recycled "+oldValue);
                 } else {
                     mNotCachedBitmaps.add(oldValue);
                 }
-
-
-                //oldValue.recycle();
             }
         };
     }
 
     /**
      *
-     * @return Una instancia de este administrador de cache.
+     * @return An instance of this cache manager
      */
     static public BitmapCacheManager getInstance() {
         if (cacheManager == null) {
@@ -70,38 +74,38 @@ public class BitmapCacheManager {
     }
 
     /**
-     * Agrega un bitmap al cache con la llave dada y pone su refcount en 1
+     * Adds a bitmap to the cache and sets its ref. count to 0
      * @param key
      * @param value
      */
     public void put(String key, Bitmap value) {
-        i(TAG, "put: "+key+" - "+value);
+        d(TAG, "put: "+key+" - "+value);
         lruCache.put(key, value);
         mBitmapRefCountMap.put(value,0);
 
     }
 
     /**
-     * Incrementa el refcount del bitmap si existe.
+     * Increments the refcount for the given bitmap if it exists on the list
      * @param bitmap
      */
     public synchronized void  increaseRefCount(Bitmap bitmap){
-        i(TAG, "increaseRefCount: "+lruCache.size()+" + "+mNotCachedBitmaps.size());
+        d(TAG, "increaseRefCount: "+lruCache.size()+" + "+mNotCachedBitmaps.size());
         if(bitmap==null)
             return;
         if(mBitmapRefCountMap.containsKey(bitmap)){
             mBitmapRefCountMap.put(bitmap,(mBitmapRefCountMap.get(bitmap))+1);
         }
-        i(TAG, "increaseRefCount: "+bitmap+" - "+mBitmapRefCountMap.get(bitmap));
+        d(TAG, "increaseRefCount: "+bitmap+" - "+mBitmapRefCountMap.get(bitmap));
     }
 
     /**
-     * Se decrementa la cuenta de referencias del bitmap.
-     * Si alcanza un valor 0 y ya no existe en el cache, se recicla.
+     * Decreases the refcount for the given bitmap if it exists.
+     * If the references reach 0 and it is no longer on the cache, it is recycled.
      * @param bitmap
      */
     public synchronized void decreaseRefCount(Bitmap bitmap){
-        i(TAG, "decreaseRefCount: "+lruCache.size()+" + "+mNotCachedBitmaps.size());
+        d(TAG, "decreaseRefCount: "+lruCache.size()+" + "+mNotCachedBitmaps.size());
         if(mBitmapRefCountMap.containsKey(bitmap)){
 
             mBitmapRefCountMap.put(bitmap,(mBitmapRefCountMap.get(bitmap))-1);
@@ -111,7 +115,7 @@ public class BitmapCacheManager {
                 bitmap.recycle();
 
                 System.gc();
-                i(TAG, "decreaseRefCount: reciclado");
+                i(TAG, "decreaseRefCount: recycled");
             }
             i(TAG, "decreaseRefCount: "+mBitmapRefCountMap.get(bitmap));
         }
@@ -119,11 +123,7 @@ public class BitmapCacheManager {
     }
 
     public Bitmap get(String key) {
-        i(TAG, "get: "+key);
+        d(TAG, "get: "+key);
         return lruCache.get(key);
     }
-
-
-
-
 }

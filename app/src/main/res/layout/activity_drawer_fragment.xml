@@ -5,4 +5,13 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mx.org.dabicho.mygallery.DrawerExampleActivity"/>
+    tools:context="mx.org.dabicho.mygallery.DrawerExampleActivity">
+    <include layout="@layout/activity_fragment"/>
+
+    <fragment android:id="@+id/navigation_drawer"
+              android:layout_width="@dimen/navigation_drawer_width"
+              android:layout_height="match_parent"
+              android:layout_gravity="start"
+              android:name="mx.org.dabicho.mygallery.NavigationDrawerFragment"
+              tools:layout="@layout/fragment_navigation_drawer"/>
+</DrawerLayout>

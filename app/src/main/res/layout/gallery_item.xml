@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="128dp"
     android:background="@android:color/black"
-    android:scaleType="centerCrop"/>
+    android:scaleType="centerInside"/>
 <TextView
     android:id="@+id/gallery_infoTextView"
     android:layout_width="match_parent"

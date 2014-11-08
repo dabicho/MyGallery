@@ -1,27 +1,16 @@
 package mx.org.dabicho.mygallery;
 
 import android.app.Activity;
-import android.app.ActionBar;
 import android.app.Fragment;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
-
-import mx.org.dabicho.mygallery.R;
-import mx.org.dabicho.mygallery.util.SystemUiHider;
 
 /**
  * A fullscreen activity containing one single fragment and a drawer with another fragment
  */
-public abstract class FragmentActivity extends Activity {
-    private static final String TAG =  "FragmentActivity";
+public abstract class FragmentDrawerActivity extends Activity {
     private View fragmentView;
 
     abstract Fragment getFragment();
@@ -30,7 +19,7 @@ public abstract class FragmentActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fragment);
+        setContentView(R.layout.activity_drawer_fragment);
 
         fragmentView=findViewById(R.id.container);
 
@@ -40,32 +29,6 @@ public abstract class FragmentActivity extends Activity {
                     .add(R.id.container, getFragment())
                     .commit();
 
-
-        }
-
-
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if(newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE) {
-            getFragmentManager().beginTransaction().detach(getFragment()).commit();
-            setContentView(R.layout.activity_fragment);
-
-
-
-            getFragmentManager().beginTransaction().attach(getFragment())
-                    .commit();
-
-        } else {
-
-            getFragmentManager().beginTransaction().detach(getFragment()).commit();
-            setContentView(R.layout.activity_fragment);
-
-
-            getFragmentManager().beginTransaction().attach(getFragment())
-                    .commit();
 
         }
     }
@@ -106,6 +69,8 @@ public abstract class FragmentActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 
 }

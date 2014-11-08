@@ -9,16 +9,19 @@ import android.util.Log;
  * Cada galería es un bucket de el content provider de imágenes y galerías especiales
  */
 public class GalleriesManagerActivity extends FragmentActivity implements GalleriesManagerFragment.OnFragmentInteractionListener {
-    private static final String TAG =  "GalleriesManagerActivity";
+    private static final String TAG = "GalleriesManagerActivity";
+    private Fragment mFragment;
 
     @Override
     Fragment getFragment() {
-        return GalleriesManagerFragment.newInstance("param1","param2");
+        if(mFragment == null)
+            mFragment = GalleriesManagerFragment.newInstance("param1", "param2");
+        return mFragment;
     }
 
     @Override
     public void onFragmentInteraction(String id) {
-        Log.i(TAG, "onFragmentInteraction: id: "+id);
+        Log.i(TAG, "onFragmentInteraction: id: " + id);
     }
 
 

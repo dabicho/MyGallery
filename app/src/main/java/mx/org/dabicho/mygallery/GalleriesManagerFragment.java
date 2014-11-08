@@ -111,6 +111,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                 i(TAG, "getView: Asking for view " + position);
                 GalleryItemViewHolder lViewHolder;
                 if (convertView == null) {
+                    Log.i(TAG,"getView: Creando Nuevo elemento de lista");
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
                             .gallery_item, null);
 
@@ -159,6 +160,9 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+        //mListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
+        Log.i(TAG,"onCreateView: DrawingCache"+mListView.getPersistentDrawingCache()+
+        " "+mListView.isDrawingCacheEnabled());
 
         return view;
     }
