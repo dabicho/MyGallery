@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="1dp">
 <ImageView
     android:id="@+id/gallery_imageView"
     android:layout_width="match_parent"
     android:layout_height="128dp"
     android:background="@android:color/black"
-    android:scaleType="centerInside"/>
+    android:scaleType="centerInside"
+    />
 <TextView
     android:id="@+id/gallery_infoTextView"
     android:layout_width="match_parent"

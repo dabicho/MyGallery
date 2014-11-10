@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.os.Build;
 
 import mx.org.dabicho.mygallery.R;
+import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.SystemUiHider;
 
 /**
@@ -49,25 +50,24 @@ public abstract class FragmentActivity extends Activity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+
+        /*
         if(newConfig.orientation==Configuration.ORIENTATION_LANDSCAPE) {
+            BitmapCacheManager.getInstance().decreaseRefCountAll();
             getFragmentManager().beginTransaction().detach(getFragment()).commit();
             setContentView(R.layout.activity_fragment);
-
-
-
             getFragmentManager().beginTransaction().attach(getFragment())
                     .commit();
 
         } else {
-
+            BitmapCacheManager.getInstance().decreaseRefCountAll();
             getFragmentManager().beginTransaction().detach(getFragment()).commit();
             setContentView(R.layout.activity_fragment);
-
-
             getFragmentManager().beginTransaction().attach(getFragment())
                     .commit();
 
         }
+        */
     }
 
     @Override

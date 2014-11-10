@@ -79,7 +79,7 @@ public class SimpleCover extends Cover {
                 return true;
             }
             // Se decrementa su referencia y elimina
-            BitmapCacheManager.getInstance().decreaseRefCount(galleryItemViewHolder.getBitmap());
+
             galleryItemViewHolder.setBitmap(null);
         }
         if (mId == null || (lBitmap = BitmapCacheManager.getInstance().get(mId)) == null) {
@@ -93,7 +93,8 @@ public class SimpleCover extends Cover {
         } else { // Se coloca el resultado del cache e incrementa su referencia
             i(TAG, "SimpleCover: Se pinta con cache");
             galleryItemViewHolder.setBitmap(lBitmap);
-            BitmapCacheManager.getInstance().increaseRefCount(lBitmap);
+
+            Log.i(TAG,"paintCover: increaseRefCount");
             return true;
         }
 
