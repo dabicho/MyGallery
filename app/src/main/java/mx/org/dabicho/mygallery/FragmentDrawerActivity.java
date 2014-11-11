@@ -3,16 +3,20 @@ package mx.org.dabicho.mygallery;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
 
 /**
  * A fullscreen activity containing one single fragment and a drawer with another fragment
  */
 public abstract class FragmentDrawerActivity extends Activity {
     private View fragmentView;
-
+    private NavigationDrawerFragment mNavigationDrawerFragment;
+    private CharSequence mTitle;
     abstract Fragment getFragment();
 
     @Override
@@ -28,6 +32,15 @@ public abstract class FragmentDrawerActivity extends Activity {
             getFragmentManager().beginTransaction()
                     .add(R.id.container, getFragment())
                     .commit();
+
+            mNavigationDrawerFragment = (NavigationDrawerFragment)
+                    getFragmentManager().findFragmentById(R.id.navigation_drawer);
+            mTitle = getTitle();
+
+            // Set up the drawer.
+            mNavigationDrawerFragment.setUp(
+                    R.id.navigation_drawer,
+                    (DrawerLayout) findViewById(R.id.drawer_layout));
 
 
         }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="mx.org.dabicho.mygallery" >
+    package="mx.org.dabicho.mygallery"
+    >
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -10,7 +11,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="mx.org.dabicho.mygallery.GalleryManagerActivity"
+            android:name=".templateExamples.GalleryManagerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:theme="@style/FullscreenTheme" >
@@ -26,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="mx.org.dabicho.mygallery.DrawerExampleActivity"
+            android:name=".templateExamples.DrawerExampleActivity"
             android:label="@string/title_activity_drawer_example" >
         </activity>
     </application>

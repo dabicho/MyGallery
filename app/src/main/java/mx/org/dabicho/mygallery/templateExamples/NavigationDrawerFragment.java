@@ -1,4 +1,4 @@
-package mx.org.dabicho.mygallery;
+package mx.org.dabicho.mygallery.templateExamples;
 
 
 import android.app.Activity;
@@ -21,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import mx.org.dabicho.mygallery.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

@@ -4,12 +4,14 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
 
+import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
+
 /**
  * Actividad administradora de galerías
  * Presenta la lista de galerías
  * Cada galería es un bucket de el content provider de imágenes y galerías especiales
  */
-public class GalleriesManagerActivity extends FragmentActivity implements GalleriesManagerFragment.OnFragmentInteractionListener {
+public class GalleriesManagerActivity extends FragmentDrawerActivity implements GalleriesManagerFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "GalleriesManagerActivity";
     private Fragment mFragment;
 
@@ -71,5 +73,8 @@ public class GalleriesManagerActivity extends FragmentActivity implements Galler
         Log.i(TAG, "onFragmentInteraction: id: " + id);
     }
 
+    @Override
+    public void onNavigationDrawerItemSelected(int position) {
 
+    }
 }

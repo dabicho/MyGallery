@@ -129,7 +129,7 @@ public class SimpleCover extends Cover {
         mId = creaNombreArchivo();
 
         i(TAG, "generateCover: gID " + mGalleryId + " : " + lCursor.getCount());
-        lBitmap = generateSimpleCoverBitmap(mContext.getResources(), lCursor.getString(0),
+        lBitmap = generateSimpleCoverBitmap( lCursor.getString(0),
                 preferredWidth,
                 preferredHeight);
         if (lCursor.getString(0) == null || lBitmap == null) {
@@ -151,7 +151,7 @@ public class SimpleCover extends Cover {
      * @param height el alto deseado de recorte
      * @return una imagen de width x height que representa un segmento central de la imagen source
      */
-    public Bitmap generateSimpleCoverBitmap(Resources resources, String source, int width, int height) {
+    public Bitmap generateSimpleCoverBitmap(String source, int width, int height) {
         if (source == null || width <= 0 || height <= 0)
             return null;
         int x = 0;

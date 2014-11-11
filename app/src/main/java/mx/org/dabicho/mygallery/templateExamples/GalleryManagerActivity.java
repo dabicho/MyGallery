@@ -1,5 +1,6 @@
-package mx.org.dabicho.mygallery;
+package mx.org.dabicho.mygallery.templateExamples;
 
+import mx.org.dabicho.mygallery.R;
 import mx.org.dabicho.mygallery.model.Gallery;
 import mx.org.dabicho.mygallery.model.IdConstants;
 import mx.org.dabicho.mygallery.util.GalleriesLoader;

@@ -1,4 +1,4 @@
-package mx.org.dabicho.mygallery;
+package mx.org.dabicho.mygallery.templateExamples;
 
 import android.app.Activity;
 
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 
+import mx.org.dabicho.mygallery.R;
 
 
 public class DrawerExampleActivity extends Activity

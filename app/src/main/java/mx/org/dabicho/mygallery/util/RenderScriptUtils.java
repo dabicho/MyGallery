@@ -31,11 +31,23 @@ public class RenderScriptUtils {
 
 
     public Bitmap blurBitmap(Bitmap src){
-        Bitmap blurredBitmap = Bitmap.createBitmap(src.getWidth(),src.getHeight(),src.getConfig());
+        int origWidth=src.getWidth();
+        int origHegith=src.getHeight();
 
+
+        Bitmap scallBM=Bitmap.createScaledBitmap(src,origWidth/4, origHegith/4, true);
+        src.recycle();
+        src=scallBM;
+        //src=Bitmap.createScaledBitmap(scallBM,origWidth, origHegith, true);
+        //scallBM.recycle();
+
+        Bitmap blurredBitmap = Bitmap.createBitmap(src.getWidth(),src.getHeight(),src.getConfig());
         ScriptIntrinsicBlur lIntrinsicBlur=ScriptIntrinsicBlur.create(mRenderScript, Element.U8_4(mRenderScript));
+
         Allocation tmpIn =Allocation.createFromBitmap(mRenderScript,src);
         Allocation tmpOut=Allocation.createFromBitmap(mRenderScript,blurredBitmap);
+
+
 
         lIntrinsicBlur.setRadius(25F);
         lIntrinsicBlur.setInput(tmpIn);
@@ -43,6 +55,9 @@ public class RenderScriptUtils {
         tmpOut.copyTo(blurredBitmap);
         src.recycle();
 
-        return blurredBitmap;
+        src=Bitmap.createScaledBitmap(blurredBitmap,origWidth, origHegith, true);
+
+
+        return src;
     }
 }

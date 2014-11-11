@@ -4,4 +4,5 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="mx.org.dabicho.mygallery.FragmentActivity"
-             tools:ignore="MergeRootFrame"/>
+             tools:ignore="MergeRootFrame"
+    android:theme="@android:style/Theme.Holo"/>
