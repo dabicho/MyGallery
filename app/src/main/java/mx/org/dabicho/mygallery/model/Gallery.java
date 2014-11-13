@@ -118,8 +118,3 @@ public abstract class Gallery {
 
 }
 
-enum GalleryType {
-    CONTENT_PROVIDER,
-    ALBUM,
-    QUERY
-}

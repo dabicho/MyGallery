@@ -3,7 +3,6 @@ package mx.org.dabicho.mygallery;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,10 +13,21 @@ import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
  * A fullscreen activity containing one single fragment and a drawer with another fragment
  */
 public abstract class FragmentDrawerActivity extends Activity {
-    private View fragmentView;
+    private View mFragmentView;
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
+
+    /**
+     * This method must return the fragment with the main activity content.
+     * @return
+     */
     abstract Fragment getFragment();
+
+    /**
+     * This method must return the fragment for the drawer
+     * @return
+     */
+    abstract NavigationDrawerFragment getDrawerFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +35,7 @@ public abstract class FragmentDrawerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_fragment);
 
-        fragmentView=findViewById(R.id.container);
+        mFragmentView =findViewById(R.id.container);
 
         if (savedInstanceState == null) {
 
@@ -33,14 +43,9 @@ public abstract class FragmentDrawerActivity extends Activity {
                     .add(R.id.container, getFragment())
                     .commit();
 
-            mNavigationDrawerFragment = (NavigationDrawerFragment)
-                    getFragmentManager().findFragmentById(R.id.navigation_drawer);
-            mTitle = getTitle();
 
-            // Set up the drawer.
-            mNavigationDrawerFragment.setUp(
-                    R.id.navigation_drawer,
-                    (DrawerLayout) findViewById(R.id.drawer_layout));
+            mNavigationDrawerFragment=getDrawerFragment();
+            mTitle = getTitle();
 
 
         }
@@ -49,7 +54,7 @@ public abstract class FragmentDrawerActivity extends Activity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        fragmentView.setSystemUiVisibility(
+        mFragmentView.setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN

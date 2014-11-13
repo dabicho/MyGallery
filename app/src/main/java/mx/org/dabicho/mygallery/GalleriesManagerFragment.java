@@ -31,6 +31,7 @@ import java.util.List;
 
 import mx.org.dabicho.mygallery.dummy.DummyContent;
 import mx.org.dabicho.mygallery.model.Gallery;
+import mx.org.dabicho.mygallery.model.GalleryType;
 import mx.org.dabicho.mygallery.model.IdConstants;
 import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.GalleriesLoader;
@@ -50,6 +51,10 @@ import static android.util.Log.i;
 public class GalleriesManagerFragment extends Fragment implements AbsListView.OnItemClickListener {
     private static final String TAG = "GalleriesManagerFragment";
 
+    /**
+     * El tipo de galerías que se están listando
+     */
+    private GalleryType mCurrentGalleryType;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -228,6 +233,18 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
+
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
         //mListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
         Log.i(TAG, "onCreateView: DrawingCache" + mListView.getPersistentDrawingCache() +
                 " " + mListView.isDrawingCacheEnabled());
@@ -348,6 +365,9 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
      * con el id
      */
     public class GalleryItemViewHolder {
+
+
+
         private ImageView mImageView;
         private TextView mTextView;
         private long mId;

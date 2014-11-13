@@ -15,4 +15,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_example">Example action</string>
 
+    <string name="title_all_galleries">All galleries</string>
+    <string name="title_local_galleries">Local galleries</string>
+    <string name="title_virtual_galleries">Virtual galleries</string>
+    <string name="title_query_galleries">Query galleries</string>
+
 </resources>

@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import mx.org.dabicho.mygallery.R;
 
 /**
@@ -30,7 +33,7 @@ import mx.org.dabicho.mygallery.R;
  * design guidelines</a> for a complete explanation of the behaviors implemented here.
  */
 public class NavigationDrawerFragment extends Fragment {
-
+    private static final String TAG = "NavigationDrawerFragment";
     /**
      * Remember the position of the selected item.
      */
@@ -60,8 +63,13 @@ public class NavigationDrawerFragment extends Fragment {
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
 
+    ArrayList<String> mOptions;
+
     public NavigationDrawerFragment() {
+        mOptions=new ArrayList<String>();
     }
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +86,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         // Select either the default item (0) or the last selected item.
+        Log.i(TAG, "onCreate: Posicion seleccionada"+mCurrentSelectedPosition);
         selectItem(mCurrentSelectedPosition);
     }
 
@@ -103,11 +112,7 @@ public class NavigationDrawerFragment extends Fragment {
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                }));
+                mOptions));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
@@ -191,6 +196,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private void selectItem(int position) {
+
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
@@ -270,6 +276,19 @@ public class NavigationDrawerFragment extends Fragment {
 
     private ActionBar getActionBar() {
         return getActivity().getActionBar();
+    }
+
+    public String getOption(int index){
+        return mOptions.get(index);
+    }
+
+    public void setOptions(String[] options){
+        mOptions.clear();
+        for (String option:options) {
+            mOptions.add(option);
+        }
+
+        mDrawerListView.deferNotifyDataSetChanged();
     }
 
     /**

@@ -1,10 +1,14 @@
 package mx.org.dabicho.mygallery;
 
 import android.app.Fragment;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 
 import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
+
+import static android.util.Log.i;
 
 /**
  * Actividad administradora de galerías
@@ -14,17 +18,36 @@ import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
 public class GalleriesManagerActivity extends FragmentDrawerActivity implements GalleriesManagerFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "GalleriesManagerActivity";
     private Fragment mFragment;
+    private NavigationDrawerFragment mDrawerFragment;
 
     @Override
     Fragment getFragment() {
-        if(mFragment == null)
+        if (mFragment == null)
             mFragment = GalleriesManagerFragment.newInstance("param1", "param2");
         return mFragment;
     }
 
     @Override
+    NavigationDrawerFragment getDrawerFragment() {
+        if (mDrawerFragment == null) {
+            mDrawerFragment = (NavigationDrawerFragment)
+                    getFragmentManager().findFragmentById(R.id.navigation_drawer);
+            mDrawerFragment.setUp(
+                    R.id.navigation_drawer,
+                    (DrawerLayout) findViewById(R.id.drawer_layout));
+            mDrawerFragment.setOptions(new String[]{
+                    getString(R.string.title_all_galleries),
+                    getString(R.string.title_local_galleries),
+                    getString(R.string.title_virtual_galleries),
+                    getString(R.string.title_query_galleries),});
+        }
+        return mDrawerFragment;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //getActionBar().setBackgroundDrawable(new ColorDrawable(0xDD000000));
         Log.d(TAG, "onCreate: onCreate()");
     }
 
@@ -59,7 +82,6 @@ public class GalleriesManagerActivity extends FragmentDrawerActivity implements 
     }
 
 
-
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -67,14 +89,18 @@ public class GalleriesManagerActivity extends FragmentDrawerActivity implements 
     }
 
 
-
     @Override
     public void onFragmentInteraction(String id) {
-        Log.i(TAG, "onFragmentInteraction: id: " + id);
+        i(TAG, "onFragmentInteraction: id: " + id);
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        if (mDrawerFragment != null) {
+            setTitle(mDrawerFragment.getOption(position));
+            getActionBar().setTitle(mDrawerFragment.getOption(position));
+            i(TAG, "onNavigationDrawerItemSelected: "+mDrawerFragment.getOption(position));
+        }
 
     }
 }
