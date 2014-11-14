@@ -19,5 +19,6 @@
     <string name="title_local_galleries">Local galleries</string>
     <string name="title_virtual_galleries">Virtual galleries</string>
     <string name="title_query_galleries">Query galleries</string>
-
+    <string name="loading">loading...</string>
+    <string name="no_images">There are no images on this gallery</string>
 </resources>

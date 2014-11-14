@@ -28,7 +28,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import mx.org.dabicho.mygallery.dummy.DummyContent;
 import mx.org.dabicho.mygallery.model.Gallery;
 import mx.org.dabicho.mygallery.model.GalleryType;
 import mx.org.dabicho.mygallery.model.IdConstants;
@@ -213,7 +212,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         super.onConfigurationChanged(newConfig);
         int index = ((GridView) mListView).getFirstVisiblePosition();
         ((GridView) mListView).setNumColumns(getResources().getInteger(R.integer
-                .gallery_grid_cols));
+                .gallery_grid_manager_cols));
         ((GridView) mListView).setSelection(index);
     }
 
@@ -221,7 +220,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: onCreateView()");
-        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
+        View view = inflater.inflate(R.layout.fragment_galleries, container, false);
 
         // Set the adapter
 
@@ -294,7 +293,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+            //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
 
             // Lanzar actividad de galería
             Intent intent = new Intent(getActivity(), GalleryActivity.class);

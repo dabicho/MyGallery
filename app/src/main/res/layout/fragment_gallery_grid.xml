@@ -9,17 +9,24 @@
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="@integer/gallery_grid_manager_cols"
+        android:numColumns="auto_fit"
+        android:columnWidth="@dimen/gallery_grid_column_width"
 
         />
-
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_gravity="center"/>
     <TextView
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:visibility="invisible"
-
+        android:visibility="visible"
+        android:text="@string/loading"
+        android:textSize="32dp"
+        android:textColor="#AAAAFF"
         />
 
 </FrameLayout>
