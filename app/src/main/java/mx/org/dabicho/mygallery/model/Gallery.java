@@ -1,6 +1,10 @@
 package mx.org.dabicho.mygallery.model;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
 
 import mx.org.dabicho.mygallery.GalleriesManagerFragment;
 
@@ -19,6 +23,9 @@ import static android.util.Log.i;
  *
  */
 public abstract class Gallery {
+
+
+
     private static final String TAG =  "Gallery";
     /**
      * Nombre de la galeria
@@ -36,6 +43,8 @@ public abstract class Gallery {
      * Cubierta de la galeria
      */
     private Cover mCover;
+
+
 
     public abstract GalleryType getGalleryType();
 
@@ -114,6 +123,9 @@ public abstract class Gallery {
         i(TAG, "loadCover: for "+mName+" size: "+preferredWidth+" x "+preferredHeight);
         return mCover.generateCover(preferredWidth,preferredHeight);
     }
+
+
+
 
 
 }

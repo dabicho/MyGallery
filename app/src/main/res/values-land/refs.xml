@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="fragment_gallery" type="layout">@layout/fragment_gallery_grid</item>
+    <item name="fragment_gallery" type="layout">@layout/fragment_gallery_manager_grid</item>
 </resources>

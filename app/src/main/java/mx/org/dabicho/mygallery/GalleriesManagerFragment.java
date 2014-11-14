@@ -2,14 +2,13 @@ package mx.org.dabicho.mygallery;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,9 +32,7 @@ import mx.org.dabicho.mygallery.dummy.DummyContent;
 import mx.org.dabicho.mygallery.model.Gallery;
 import mx.org.dabicho.mygallery.model.GalleryType;
 import mx.org.dabicho.mygallery.model.IdConstants;
-import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.GalleriesLoader;
-import mx.org.dabicho.mygallery.util.ImageUtils;
 
 import static android.util.Log.i;
 
@@ -103,26 +100,27 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         super.onCreate(savedInstanceState);
 
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        if(mGalleries == null)
+        if (mGalleries == null)
             mGalleries = new ArrayList<Gallery>();
 
         // TODO: Change Adapter to display your content
         mAdapter = new ArrayAdapter<Gallery>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1,
                 mGalleries) {
-            private int lastposition=0;
+            private int lastPosition = 0;
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
 
 
                 i(TAG, "getView: Asking for view " + position);
                 GalleryItemViewHolder lViewHolder;
-                if(convertView == null) {
+                if (convertView == null) {
                     Log.i(TAG, "getView: Creando Nuevo elemento de lista");
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
                             .gallery_item, null);
@@ -137,7 +135,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                 /* ANIMACION */
                 AnimationSet set = new AnimationSet(true);
                 TranslateAnimation animation;
-                if (position >= lastposition)
+                if (position >= lastPosition)
                     animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,
                             0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                             Animation.RELATIVE_TO_SELF, 1.0f,
@@ -152,7 +150,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
                 convertView.startAnimation(set);
 
-                lastposition = position;
+                lastPosition = position;
                 /* FIN ANIMACION */
 
 
@@ -164,7 +162,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
                 lViewHolder.getTextView().setText(getItem(position).getName() + ": (" + getItem
                         (position).getCount() + ")");
-                if(!getItem(position).paintCover(lViewHolder)) {
+                if (!getItem(position).paintCover(lViewHolder)) {
                     i(TAG, "getView: starting task for gallery " + getItem(position).getName()
                             + " " + lViewHolder.getImageView().getWidth() + " x " +
                             lViewHolder.getImageView().getHeight());
@@ -209,10 +207,9 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     }
 
 
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Log.i(TAG,"onConfigurationChanged: onConfigurationChanged()");
+        Log.i(TAG, "onConfigurationChanged: onConfigurationChanged()");
         super.onConfigurationChanged(newConfig);
         int index = ((GridView) mListView).getFirstVisiblePosition();
         ((GridView) mListView).setNumColumns(getResources().getInteger(R.integer
@@ -223,7 +220,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i(TAG,"onCreateView: onCreateView()");
+        Log.i(TAG, "onCreateView: onCreateView()");
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         // Set the adapter
@@ -255,11 +252,11 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
     @Override
     public void onAttach(Activity activity) {
-        Log.i(TAG,"onAttach: onAttach()");
+        Log.i(TAG, "onAttach: onAttach()");
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -272,10 +269,9 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     }
 
 
-
     @Override
     public void onDetach() {
-        Log.i(TAG,"onDetach: onDetach()");
+        Log.i(TAG, "onDetach: onDetach()");
         super.onDetach();
         mListener = null;
     }
@@ -293,13 +289,23 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     }
 
 
-
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(null != mListener) {
+        if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+
+            // Lanzar actividad de galería
+            Intent intent = new Intent(getActivity(), GalleryActivity.class);
+
+            Bundle galleryParams = new Bundle();
+            galleryParams.putLong(GalleryFragment.PARAM_GALLERY_ID, mGalleries.get(position).getGalleryId());
+            galleryParams.putSerializable(GalleryFragment.PARAM_GALLERY_TYPE, mGalleries.get(position).getGalleryType());
+            galleryParams.putString(GalleryFragment.PARAM_GALLERY_TITLE, mGalleries.get(position).getName());
+
+            intent.putExtra(GalleryActivity.EXTRA_GALLERY, galleryParams);
+            startActivity(intent);
         }
     }
 
@@ -310,14 +316,14 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     private void prepareGalleryLoaders() {
         LoaderManager lm = getLoaderManager();
         i(TAG, "prepareGalleryLoaders: Iniciando loader");
-        lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleryLoaderCallbacks());
+        lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleriesLoaderCallbacks());
     }
 
     /**
      * Callbacks to load galleries data
      * At LoadFinished, a new list with the galleries is created
      */
-    private class GalleryLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Gallery>> {
+    private class GalleriesLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Gallery>> {
         @Override
         public Loader<List<Gallery>> onCreateLoader(int id, Bundle args) {
 
@@ -326,13 +332,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         @Override
         public void onLoadFinished(Loader<List<Gallery>> loader, List<Gallery> data) {
-            if(mGalleries != null) {
+            if (mGalleries != null) {
                 mGalleries.clear();
 
             } else
                 mGalleries = new ArrayList<Gallery>();
             mGalleries.addAll(data);
-            for(Gallery lGallery : data) {
+            for (Gallery lGallery : data) {
                 i(TAG, "onLoadFinished: " + lGallery.getName());
             }
 
@@ -367,7 +373,6 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     public class GalleryItemViewHolder {
 
 
-
         private ImageView mImageView;
         private TextView mTextView;
         private long mId;
@@ -398,12 +403,12 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         }
 
         public void setBitmap(Bitmap bitmap) {
-            if(bitmap == null) {
+            if (bitmap == null) {
                 i(TAG, "setBitmap: colocando bitmap null");
             }
-            if(mBitmap != null)
+            if (mBitmap != null)
                 i(TAG, "setBitmap: bitmap anterior no nulo");
-            if(mImageView != null) {
+            if (mImageView != null) {
                 mImageView.setImageBitmap(bitmap);
                 mBitmap = bitmap;
             }
@@ -433,7 +438,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         @Override
         protected void onPostExecute(Gallery galleries) {
 
-            if(mId != mViewHolder.getId()) {
+            if (mId != mViewHolder.getId()) {
                 // Si ambos id son diferentes, no se debe actualizar la imagen
                 return;
             }
@@ -452,7 +457,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             i(TAG, "doInBackground: for " + mGalleries.get(mId).getName());
             try {
                 Thread.sleep(1000);
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
 
             }
             // generar bitmap (y posiblemente agregarlo a algún cache)

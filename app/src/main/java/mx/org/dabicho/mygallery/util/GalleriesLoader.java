@@ -18,7 +18,7 @@ import mx.org.dabicho.mygallery.model.SimpleCover;
 public class GalleriesLoader extends DataLoader<List<Gallery>> {
     private static final String TAG = "GalleriesLoader";
 
-    private Context mContext;
+
     /**
      * Lista de columnas de consulta para las galerías
      */
@@ -31,14 +31,15 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
 
     public GalleriesLoader(Context context) {
         super(context);
-        mContext = context;
+
     }
 
     @Override
     public List<Gallery> loadInBackground() {
-        RenderScriptUtils.getInstance(mContext);
+        Context context=getContext();
+        RenderScriptUtils.getInstance(context);
         ArrayList<Gallery> galerias = new ArrayList<Gallery>();
-        Cursor lCursor = mContext.getContentResolver().query(
+        Cursor lCursor = context.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 galleryQueryProjection, "1=1) group by ( " + ImageColumns.BUCKET_ID, null,
                 ImageColumns.BUCKET_DISPLAY_NAME + " asc");
@@ -49,7 +50,7 @@ public class GalleriesLoader extends DataLoader<List<Gallery>> {
             lGallery.setName(lCursor.getString(0));
             lGallery.setGalleryId(lCursor.getLong(1));
             lGallery.setCount(lCursor.getLong(2));
-            lGallery.setCover(new SimpleCover(mContext,null, lCursor.getLong(1)));
+            lGallery.setCover(new SimpleCover(context,null, lCursor.getLong(1)));
             galerias.add(lGallery);
             //Log.i(TAG, "loadInBackground: " + lGallery.getName());
             lCursor.moveToNext();
