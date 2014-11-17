@@ -65,7 +65,23 @@ public class Image {
 
     }
 
+    public Bitmap getThumbnail(ContentResolver contentResolver){
+        try {
+            BitmapFactory.Options lOptions = new BitmapFactory.Options();
+            Bitmap thumbnail = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, mImageId,
+                    MediaStore.Images.Thumbnails.MINI_KIND, lOptions);
+            ExifInterface exif = new ExifInterface(mImageDataStream);
+            return ImageUtils.rotateBitmap(exif, thumbnail);
+        } catch(IOException e){
+            Log.e(TAG, "getThumbnail: Could Not Open Image ",e);
+            return null;
+        }
+    }
+
     public Bitmap getThumbnail(){
+
+
+
         try {
             if (mThumbnailDataStream != null) {
                 ExifInterface exif = new ExifInterface(mImageDataStream);

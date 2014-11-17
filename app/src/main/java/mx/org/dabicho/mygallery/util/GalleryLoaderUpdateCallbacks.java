@@ -12,6 +12,7 @@ public interface GalleryLoaderUpdateCallbacks {
      * Signals that the list has been updated
      *
      * @param imageList
+     * @return true if it should stop, false to continue the load
      */
-    void updateGallery(List<Image> imageList);
+    boolean updateGallery(List<Image> imageList);
 }

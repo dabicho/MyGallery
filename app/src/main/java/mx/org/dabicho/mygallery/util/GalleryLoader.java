@@ -15,7 +15,7 @@ import mx.org.dabicho.mygallery.model.Image;
 import static android.util.Log.i;
 
 /**
- * Created by dabicho on 11/13/14.
+ * DataLoader for a gallery images
  */
 public class GalleryLoader extends DataLoader<List<Image>> {
     private static final String TAG = "GalleryLoader";
@@ -46,6 +46,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
 
     @Override
     public List<Image> loadInBackground() {
+        boolean stopLoading=false;
         i(TAG, "loadInBackground: loading gallery " + mGalleryType);
         Context context = getContext();
         ArrayList<Image> images = new ArrayList<Image>();
@@ -83,8 +84,11 @@ public class GalleryLoader extends DataLoader<List<Image>> {
             images.add(image);
             if (mUpdateInterval > 0 && mUpdateCallbacks != null &&
                     images.size() % mUpdateInterval == 0) {
-                mUpdateCallbacks.updateGallery(images);
+                stopLoading = mUpdateCallbacks.updateGallery(images);
             }
+
+            if(stopLoading)
+                break;
         }
         lCursor.close();
         return images;

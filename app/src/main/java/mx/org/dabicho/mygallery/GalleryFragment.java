@@ -5,10 +5,12 @@ import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -79,14 +81,14 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
     public void onCreate(Bundle savedInstanceState) {
         i(TAG, "onCreate: onCreate()");
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        if(getArguments() != null) {
             mGalleryId = getArguments().getLong(PARAM_GALLERY_ID);
             mGalleryType = (GalleryType) getArguments().getSerializable(PARAM_GALLERY_TYPE);
             mGalleryTitle = getArguments().getString(PARAM_GALLERY_TITLE);
 
         }
         getActivity().setTitle(mGalleryTitle);
-        if (mImages == null)
+        if(mImages == null)
             mImages = new ArrayList<Image>();
         i(TAG, "onCreate: for gallery " + mGalleryId + " : " + mGalleryType);
 
@@ -97,13 +99,20 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 //TODO Change to return a thumbnail
-                if (convertView == null) {
+                if(convertView == null) {
+                    // TODO Ver forma de generar mejor la vista
                     convertView = new ImageView(getActivity());
+                    AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams
+                            ((int) getResources().getDimension(R.dimen.gallery_grid_column_width)
+                                    , (int) getResources().getDimension(R.dimen.gallery_grid_column_width));
+
+                    convertView.setLayoutParams(layoutParams);
 
                 }
-                convertView.setMinimumHeight(mImagesGridView.getColumnWidth());
-                ((ImageView) convertView).setImageBitmap(getItem(position).getThumbnail());
-                i(TAG, "getView: " + getItem(position));
+
+                ((ImageView) convertView).setImageBitmap(getItem(position).getThumbnail
+                        (getActivity().getContentResolver()));
+
                 return convertView;
 
             }
@@ -146,42 +155,47 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
     private class GalleryLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Image>> {
         @Override
         public Loader<List<Image>> onCreateLoader(int id, Bundle args) {
-            return new GalleryLoader(getActivity(), mGalleryId, mGalleryType,100,new GalleryLoaderUpdateCallbacks() {
-                @Override
-                public void updateGallery(final List<Image> imageList) {
-                    if (mImages != null) {
-                        mImages.clear();
-                    } else {
-                        mImages = new ArrayList<Image>();
-                    }
-                    mImages.addAll(imageList);
-                    getActivity().runOnUiThread(new Runnable() {
+            return new GalleryLoader(getActivity(), mGalleryId, mGalleryType, 10,
+                    new GalleryLoaderUpdateCallbacks() {
                         @Override
-                        public void run() {
-                            i(TAG, "run: updating DATA");
+                        public boolean updateGallery(final List<Image> imageList) {
 
-                            mAdapter.notifyDataSetChanged();
+                            if(getActivity() != null) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        i(TAG, "run: updating DATA");
+                                        if(mImages != null) {
+                                            mImages.clear();
+                                        } else {
+                                            mImages = new ArrayList<Image>();
+                                        }
+                                        mImages.addAll(imageList);
+                                        mAdapter.notifyDataSetChanged();
+                                    }
+                                });
+                                return false;
+                            }
+                           return true;
                         }
                     });
-                }
-            });
         }
 
         @Override
         public void onLoadFinished(Loader<List<Image>> loader, List<Image> data) {
-            if (mImages != null) {
+            if(mImages != null) {
                 mImages.clear();
             } else {
                 mImages = new ArrayList<Image>();
             }
             mImages.addAll(data);
 
-            if (!mImages.isEmpty()) {
+            if(!mImages.isEmpty()) {
 
-                i(TAG, "onLoadFinished: Lista cargada "+mImages.size());
+                i(TAG, "onLoadFinished: Lista cargada " + mImages.size());
                 mView.findViewById(android.R.id.empty).setVisibility(View.INVISIBLE);
                 mView.findViewById(R.id.loading).setVisibility(View.INVISIBLE);
-                i(TAG, "onLoadFinished: Vista: "+mView.findViewById(android.R.id.empty));
+                i(TAG, "onLoadFinished: Vista: " + mView.findViewById(android.R.id.empty));
             }
             mAdapter.notifyDataSetChanged();
 
@@ -189,8 +203,10 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
         @Override
         public void onLoaderReset(Loader<List<Image>> loader) {
-
+            Log.i(TAG, "onLoaderReset: onLoaderReset()");
         }
+
+
     }
 
 
