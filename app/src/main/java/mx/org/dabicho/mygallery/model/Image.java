@@ -80,8 +80,6 @@ public class Image {
 
     public Bitmap getThumbnail(){
 
-
-
         try {
             if (mThumbnailDataStream != null) {
                 ExifInterface exif = new ExifInterface(mImageDataStream);
