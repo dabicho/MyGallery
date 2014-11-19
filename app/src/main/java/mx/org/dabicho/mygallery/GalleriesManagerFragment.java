@@ -122,7 +122,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                 if(convertView == null) {
                     Log.i(TAG, "getView: Creando Nuevo elemento de lista");
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
-                            .gallery_item, null);
+                            .gallery_manager_item, null);
 
                     lViewHolder = new GalleryItemViewHolder();
                     convertView.setTag(lViewHolder);

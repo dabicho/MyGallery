@@ -6,12 +6,17 @@ import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +31,8 @@ import mx.org.dabicho.mygallery.model.Gallery;
 import mx.org.dabicho.mygallery.model.GalleryType;
 import mx.org.dabicho.mygallery.model.IdConstants;
 import mx.org.dabicho.mygallery.model.Image;
+import mx.org.dabicho.mygallery.services.BitmapCacheManager;
+import mx.org.dabicho.mygallery.services.ThumbnailLoader;
 import mx.org.dabicho.mygallery.util.GalleryLoader;
 import mx.org.dabicho.mygallery.util.GalleryLoaderUpdateCallbacks;
 
@@ -64,6 +71,8 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
     private View mView;
 
+    private ThumbnailLoader<ImageView> mThumbnailLoader;
+
     public static GalleryFragment newInstance(long galleryId, GalleryType galleryType, String galleryTitle) {
         GalleryFragment fragment = new GalleryFragment();
         Bundle args = new Bundle();
@@ -82,6 +91,19 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onCreate(Bundle savedInstanceState) {
         i(TAG, "onCreate: onCreate()");
+
+        mThumbnailLoader = new ThumbnailLoader<ImageView>(new Handler(), getActivity());
+        mThumbnailLoader.setListener(new ThumbnailLoader.Listener<ImageView>() {
+            @Override
+            public void onThumbnailLoaded(ImageView imageView, Bitmap thumbnail) {
+                if(isVisible())
+                    imageView.setImageBitmap(thumbnail);
+            }
+        });
+        mThumbnailLoader.start();
+        // Asegura que se inicialize el looper
+        mThumbnailLoader.getLooper();
+
         super.onCreate(savedInstanceState);
         if(getArguments() != null) {
             mGalleryId = getArguments().getLong(PARAM_GALLERY_ID);
@@ -100,30 +122,41 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                GalleryThumbnailHolder lThumbnailHolder;
+
                 //TODO Change to return a thumbnail
                 if(convertView == null) {
                     // TODO Ver forma de generar mejor la vista
-                    convertView = new ImageView(getActivity());
-                    AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams
-                            ((int) getResources().getDimension(R.dimen.gallery_grid_column_width)
-                                    , (int) getResources().getDimension(R.dimen.gallery_grid_column_width));
-                    convertView.setLayoutParams(layoutParams);
-                    lThumbnailHolder = new GalleryThumbnailHolder();
-                    convertView.setTag(lThumbnailHolder);
-
-                } else {
-                    lThumbnailHolder = (GalleryThumbnailHolder) convertView.getTag();
+                    convertView = getActivity().getLayoutInflater().
+                            inflate(R.layout.gallery_item,parent,false);
                 }
 
-                lThumbnailHolder.setId(position);
-                lThumbnailHolder.setImageView((ImageView) convertView);
+                ImageView imageView = (ImageView)convertView.
+                        findViewById(R.id.gallery_item_imageView);
 
-                new ImageThumbnailTask(position, lThumbnailHolder).executeOnExecutor(AsyncTask
-                        .THREAD_POOL_EXECUTOR, null);
-                //((ImageView) convertView).setImageBitmap(getItem(position).getThumbnail
-                //        (getActivity().getContentResolver()));
+                Image image = mImages.get(position);
+                if(image.getThumbnailDataStream()==null || BitmapCacheManager.getInstance().
+                        get(image.getThumbnailDataStream())
+                        ==null) {
+                    //TODO poner imagen por default
+                    imageView.setImageResource(R.drawable.templates);
+                    mThumbnailLoader.queueThumbnail(imageView,image);
 
+
+                } else {
+                    mThumbnailLoader.dequeueThumbnail(imageView);
+                    imageView.setImageBitmap(
+                            BitmapCacheManager.getInstance().get(image.getThumbnailDataStream()));
+                }
+
+
+                AnimationSet set = new AnimationSet(true);
+                AlphaAnimation lAlphaAnimation = new AlphaAnimation(0.2F,1F);
+                ScaleAnimation lScaleAnimation =new ScaleAnimation(0.2F,1F,0.2F,1F);
+                lAlphaAnimation.setDuration(600);
+                lScaleAnimation.setDuration(600);
+                set.addAnimation(lAlphaAnimation);
+                set.addAnimation(lScaleAnimation);
+                convertView.startAnimation(set);
                 return convertView;
 
             }
@@ -150,6 +183,18 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
     }
 
     @Override
+    public void onDestroyView() {
+        mThumbnailLoader.clearQueue();
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumbnailLoader.quit();
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //TODO Mostrar imagen al hacer click
     }
@@ -163,6 +208,11 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
         lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleryLoaderCallbacks());
     }
 
+
+    /**
+     * The loader that loads the images list uses this callback to signal an update to the list
+     * TODO Not the best nor a clean solution but works for the time being
+     */
     private class GalleryLoaderCallbacks implements LoaderManager.LoaderCallbacks<List<Image>> {
         @Override
         public Loader<List<Image>> onCreateLoader(int id, Bundle args) {
@@ -220,95 +270,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
     }
 
-    /**
-     * Holder. This class holds a reference to the elements that are going to be modified related
-     * to an id.
-     */
-
-    public class GalleryThumbnailHolder {
-        private ImageView mImageView;
-        private Bitmap mBitmap;
-        private long mId;
-
-        public ImageView getImageView() {
-            return mImageView;
-        }
-
-        public void setImageView(ImageView imageView) {
-            mImageView = imageView;
-        }
-
-        public Bitmap getBitmap() {
-            return mBitmap;
-        }
-
-        public void setBitmap(Bitmap bitmap) {
-            if(mImageView != null) {
-                mImageView.setImageBitmap(bitmap);
-                mBitmap = bitmap;
-            }
-        }
-
-        public long getId() {
-            return mId;
-        }
-
-        public void setId(long id) {
-            mId = id;
-        }
-    }
-
-    /**
-     * Este AsyncTask carga el thumbnail de cada imágen y lo coloca en su vista. Utiliza
-     * GalleryThumbnailHolder para llevar un registro de la correspondencia del bitmap con la vista
-     */
-    private class ImageThumbnailTask extends AsyncTask<Void, Void, Void> {
-        /**
-         * The id holds the position inside the gridView list. If this id and the thumbnailHolder
-         * id differs, it means they do not correspond to each other and the view is not updated.
-         * The ImageView inside the thumbnailHolder is updated only when their ids match.
-         */
-        private int mId;
-        /**
-         * The image associated with the id
-         */
-        Image mImage;
-        /**
-         * The data to set to the bitmap
-         */
-        private GalleryThumbnailHolder mThumbnailHolder;
-
-        /**
-         * The bitmap that will be loaded
-         */
-        private Bitmap mBitmap;
-
-        /**
-         * @param id              The original id for the task used to check if the thumbnailHolder should be
-         *                        updated.
-         * @param thumbnailHolder the thumbnail holder to be updated after execution
-         */
-        ImageThumbnailTask(int id, GalleryThumbnailHolder thumbnailHolder) {
-            mId = id;
-            mImage = mImages.get(id);
-            mThumbnailHolder = thumbnailHolder;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            mBitmap = mImages.get(mId).getThumbnail(getActivity().getContentResolver());
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void o) {
-
-            if(mId == mThumbnailHolder.getId()) {
-                mThumbnailHolder.setBitmap(mBitmap);
-            }
-            super.onPostExecute(o);
-        }
 
 
-    }
+
 }

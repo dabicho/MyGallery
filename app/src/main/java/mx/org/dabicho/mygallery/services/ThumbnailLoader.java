@@ -1,5 +1,7 @@
 package mx.org.dabicho.mygallery.services;
 
+import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -9,6 +11,8 @@ import android.os.Message;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import mx.org.dabicho.mygallery.model.Image;
 
 /**
  * Created by dabicho on 17/11/14.
@@ -20,10 +24,12 @@ public class ThumbnailLoader<Token> extends HandlerThread {
     private static final int MESSAGE_LOAD = 0;
     private static final int MESSAGE_PRELOAD_CACHE = 1;
 
+    private ContentResolver mContentResolver;
+
     Handler mHandler;
     Handler mResponseHandler;
 
-    Map<Token, String> requestMap = Collections.synchronizedMap(new HashMap<Token, String>());
+    Map<Token, Image> requestMap = Collections.synchronizedMap(new HashMap<Token, Image>());
 
     Listener<Token> mListener;
 
@@ -50,8 +56,11 @@ public class ThumbnailLoader<Token> extends HandlerThread {
      *
      * @param responseHandler
      */
-    public ThumbnailLoader(Handler responseHandler) {
+    public ThumbnailLoader(Handler responseHandler, Context context) {
+
         super(TAG);
+        mResponseHandler=responseHandler;
+        mContentResolver=context.getContentResolver();
     }
 
     public void setListener(Listener<Token> listener) {
@@ -100,16 +109,25 @@ public class ThumbnailLoader<Token> extends HandlerThread {
      */
     private void handleRequest(final Token token) {
 
-        final String filename = requestMap.get(token);
-        if(filename == null)
+        final Image image = requestMap.get(token);
+        if(image == null)
             return;
         final Bitmap bitmap;
-        bitmap = BitmapFactory.decodeFile(filename);
-        BitmapCacheManager.getInstance().put(filename, bitmap);
+
+        if(image.getThumbnailDataStream()!=null ||
+                image.queryThumbnailDataStream(mContentResolver)!=null){
+            bitmap=image.getThumbnail();
+        } else {
+            bitmap=image.getThumbnail(mContentResolver);
+            image.queryThumbnailDataStream(mContentResolver);
+        }
+
+        BitmapCacheManager.getInstance().put(image.getThumbnailDataStream(), bitmap);
+
         mResponseHandler.post(new Runnable() {
             @Override
             public void run() {
-                if(requestMap.get(token) != filename) {
+                if(requestMap.get(token) != image) {
                     return;
                 }
                 requestMap.remove(token);
@@ -131,8 +149,8 @@ public class ThumbnailLoader<Token> extends HandlerThread {
     /**
      * Enqueue a request to load an image and a token
      */
-    public void queueThumbnail(Token token, String filename){
-        requestMap.put(token, filename);
+    public void queueThumbnail(Token token, Image image){
+        requestMap.put(token, image);
         {
             Message message=mHandler.obtainMessage(MESSAGE_LOAD,token);
             mHandler.sendMessageAtFrontOfQueue(message);

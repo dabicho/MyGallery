@@ -76,7 +76,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
             Image image = new Image();
             image.setImageId(lCursor.getLong(0));
             image.setImageDataStream(lCursor.getString(1));
-            image.queryThumbnailDataStream(getContext().getContentResolver());
+            //image.queryThumbnailDataStream(getContext().getContentResolver());
             //image.setThumbnailDataStream(lCursor.getString(2));
 
 

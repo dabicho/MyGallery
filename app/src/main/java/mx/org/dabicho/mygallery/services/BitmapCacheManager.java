@@ -29,7 +29,7 @@ public class BitmapCacheManager {
 
 
     private BitmapCacheManager() {
-        lruCache = new LruCache<String, Bitmap>(16){
+        lruCache = new LruCache<String, Bitmap>(24*1024*1024){
             /**
              * Remove a bitmap from the cache
              * If its referenced 0 times, it should be recycled.
@@ -41,10 +41,15 @@ public class BitmapCacheManager {
              */
             @Override
             protected synchronized void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
-                Log.d(TAG, "entryRemoved: logSetsContents");
+
                 super.entryRemoved(evicted, key, oldValue, newValue);
                 System.gc();
 
+            }
+
+            @Override
+            protected int sizeOf(String key, Bitmap value) {
+                return value.getByteCount();
             }
         };
     }
@@ -66,12 +71,12 @@ public class BitmapCacheManager {
      * @param value
      */
     public void put(String key, Bitmap value) {
-        d(TAG, "put: "+key+" - "+value);
+
         lruCache.put(key, value);
     }
 
     public Bitmap get(String key) {
-        d(TAG, "get: "+key);
+
         return lruCache.get(key);
     }
 
