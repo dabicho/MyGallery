@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import mx.org.dabicho.mygallery.R;
 import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
 
 /**
