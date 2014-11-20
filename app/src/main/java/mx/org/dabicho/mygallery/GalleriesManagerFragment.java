@@ -36,11 +36,8 @@ import mx.org.dabicho.mygallery.util.GalleriesLoader;
 import static android.util.Log.i;
 
 /**
- * A fragment representing a list of Galleries.
- * <p/>
- * Large screen devices (such as tablets) are supported by replacing the ListView
- * with a GridView.
- * <p/>
+ * A fragment representing a grid of Galleries.
+ *
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */

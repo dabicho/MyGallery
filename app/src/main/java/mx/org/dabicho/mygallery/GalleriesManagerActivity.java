@@ -11,9 +11,10 @@ import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
 import static android.util.Log.i;
 
 /**
- * Actividad administradora de galerías
- * Presenta la lista de galerías
- * Cada galería es un bucket de el content provider de imágenes y galerías especiales
+ * Galleries manager activity
+ * Pesents a list of galleries and contains a left-hand drawer with options to select what galleries are displayed: All, local (media store), virtual (references to collections of images from local
+ * galleries) or saved search queries.
+ *
  */
 public class GalleriesManagerActivity extends FragmentDrawerActivity implements GalleriesManagerFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "GalleriesManagerActivity";

@@ -1,15 +1,9 @@
 package mx.org.dabicho.mygallery.util;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
-import android.util.Log;
-
-import java.io.IOException;
 
 import static android.util.Log.e;
 
@@ -19,8 +13,8 @@ import static android.util.Log.e;
 public class ImageUtils {
     private static final String TAG = "ImageUtils";
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth,
-                                            int reqHeight) {
+    public static int calculateMaxInSampleSize(BitmapFactory.Options options, int reqWidth,
+                                               int reqHeight) {
         final int height = options.outHeight;
         final int width = options.outWidth;
 
@@ -34,12 +28,35 @@ public class ImageUtils {
 
     }
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, boolean rotate90) {
+    public static int calculateMinInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, boolean rotate90) {
         if (rotate90)
-            return calculateInSampleSize(options, reqHeight, reqWidth);
+            return calculateMinInSampleSize(options, reqHeight, reqWidth);
         else
-            return calculateInSampleSize(options, reqWidth, reqHeight);
+            return calculateMinInSampleSize(options, reqWidth, reqHeight);
     }
+
+    public static int calculateMinInSampleSize(BitmapFactory.Options options, int reqWidth,
+                                               int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+
+        int stretch_width = (int) Math.ceil((float) width / (float) reqWidth);
+        int stretch_height = (int) Math.ceil((float) height / (float) reqHeight);
+
+        if (stretch_width >= stretch_height)
+            return stretch_width;
+        else
+            return stretch_height;
+
+    }
+
+    public static int calculateMaxInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, boolean rotate90) {
+        if (rotate90)
+            return calculateMaxInSampleSize(options, reqHeight, reqWidth);
+        else
+            return calculateMaxInSampleSize(options, reqWidth, reqHeight);
+    }
+
 
     public static Bitmap rotateBitmap(ExifInterface exif, Bitmap bitmap) {
         Matrix lMatrix = new Matrix();

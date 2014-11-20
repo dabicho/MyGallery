@@ -10,7 +10,7 @@ import android.view.View;
 import mx.org.dabicho.mygallery.templateExamples.NavigationDrawerFragment;
 
 /**
- * A fullscreen activity containing one single fragment and a drawer with another fragment
+ * An abstract fullscreen activity containing one single fragment and a drawer with another fragment
  */
 public abstract class FragmentDrawerActivity extends Activity {
     private View mFragmentView;

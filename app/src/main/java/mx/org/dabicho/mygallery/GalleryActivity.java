@@ -9,7 +9,7 @@ import javax.microedition.khronos.egl.EGL;
 import mx.org.dabicho.mygallery.model.GalleryType;
 
 /**
- * Actividad para mostrar las imágenes de una galería
+ * Activity to display the images from a gallery
  */
 public class GalleryActivity extends FragmentActivity {
     private static final String TAG = "GalleryActivity";

@@ -35,6 +35,11 @@
             android:theme="@style/FullscreenTheme">
 
         </activity>
+        <activity android:name=".GallerySlideActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="Slide Show"
+            android:theme="@style/FullscreenTheme">
+        </activity>
         <activity
             android:name=".templateExamples.DrawerExampleActivity"
             android:label="@string/title_activity_drawer_example">

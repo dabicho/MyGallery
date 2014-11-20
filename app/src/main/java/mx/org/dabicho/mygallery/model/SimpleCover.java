@@ -1,22 +1,16 @@
 package mx.org.dabicho.mygallery.model;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.provider.MediaStore;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.ImageView;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -179,15 +173,15 @@ public class SimpleCover extends Cover {
                 case ExifInterface.ORIENTATION_ROTATE_270:
                 case ExifInterface.ORIENTATION_TRANSPOSE:
                 case ExifInterface.ORIENTATION_TRANSVERSE:
-                    lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height, true);
+                    lOptions.inSampleSize = ImageUtils.calculateMaxInSampleSize(lOptions, width, height, true);
                     break;
                 default:
-                    lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height, false);
+                    lOptions.inSampleSize = ImageUtils.calculateMaxInSampleSize(lOptions, width, height, false);
             }
         } catch (IOException e) {
             e(TAG, "generateSimpleCoverBitmap: No fué posible leer los metadatos exif de el archivo",
                     e);
-            lOptions.inSampleSize = ImageUtils.calculateInSampleSize(lOptions, width, height);
+            lOptions.inSampleSize = ImageUtils.calculateMaxInSampleSize(lOptions, width, height);
         }
         i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lOptions.outWidth + "" +
                 " x" + " " + lOptions.outHeight);

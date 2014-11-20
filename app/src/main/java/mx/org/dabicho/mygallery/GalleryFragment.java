@@ -2,6 +2,7 @@ package mx.org.dabicho.mygallery;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
+import android.content.Intent;
 import android.content.Loader;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -33,13 +34,14 @@ import mx.org.dabicho.mygallery.model.IdConstants;
 import mx.org.dabicho.mygallery.model.Image;
 import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.services.ThumbnailLoader;
+import mx.org.dabicho.mygallery.util.CurrentImageList;
 import mx.org.dabicho.mygallery.util.GalleryLoader;
 import mx.org.dabicho.mygallery.util.GalleryLoaderUpdateCallbacks;
 
 import static android.util.Log.i;
 
 /**
- * Fragmento que lista en un grid las imágenes disponibles en la galería
+ * Fragment to display a grid of images from a gallery
  */
 public class GalleryFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -197,6 +199,20 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //TODO Mostrar imagen al hacer click
+
+        // Notify the active callbacks interface (the activity, if the
+        // fragment is attached to one) that an item has been selected.
+        //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
+
+        // Lanzar actividad de galería
+        Intent intent = new Intent(getActivity(), GallerySlideActivity.class);
+
+
+        CurrentImageList.getInstance().setImages(mImages);
+        CurrentImageList.getInstance().setCurrentPosition(position);
+        CurrentImageList.getInstance().setTitle(getActivity().getTitle().toString());
+
+        startActivity(intent);
     }
 
     /**

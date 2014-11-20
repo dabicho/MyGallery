@@ -19,10 +19,10 @@ import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.SystemUiHider;
 
 /**
- * A fullscreen activity containing one single fragment and a drawer with another fragment
+ * An abstract fullscreen activity containing one single fragment and a drawer with another fragment.
  */
 public abstract class FragmentActivity extends Activity {
-    private static final String TAG =  "FragmentActivity";
+    private static final String TAG = "FragmentActivity";
     private View fragmentView;
 
     abstract Fragment getFragment();
@@ -33,7 +33,7 @@ public abstract class FragmentActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fragment);
 
-        fragmentView=findViewById(R.id.container);
+        fragmentView = findViewById(R.id.container);
 
         if (savedInstanceState == null) {
 
@@ -82,7 +82,6 @@ public abstract class FragmentActivity extends Activity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE
         );
     }
-
 
 
     @Override
