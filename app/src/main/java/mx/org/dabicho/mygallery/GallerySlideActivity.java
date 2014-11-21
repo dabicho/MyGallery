@@ -123,12 +123,16 @@ public class GallerySlideActivity extends Activity {
                         case ExifInterface.ORIENTATION_ROTATE_270:
                         case ExifInterface.ORIENTATION_TRANSPOSE:
                         case ExifInterface.ORIENTATION_TRANSVERSE:
-                            lOptions.inSampleSize = ImageUtils.calculateMinInSampleSize(lOptions,
-                                    preferedSize.y, preferedSize.x, true);
+                            lOptions.inSampleSize = Math.min(ImageUtils.calculateMinInSampleSize(lOptions,
+                                    preferedSize.x, preferedSize.y, true),
+                                    ImageUtils.calculateMinInSampleSize(lOptions,
+                                            preferedSize.x, preferedSize.y, false));
                             break;
                         default:
-                            lOptions.inSampleSize = ImageUtils.calculateMinInSampleSize(lOptions,
-                                    preferedSize.x, preferedSize.y, false);
+                            lOptions.inSampleSize = Math.min(ImageUtils.calculateMinInSampleSize(lOptions,
+                                            preferedSize.x, preferedSize.y, true),
+                                    ImageUtils.calculateMinInSampleSize(lOptions,
+                                            preferedSize.x, preferedSize.y, false));
 
                     }
                 } catch (IOException e) {
