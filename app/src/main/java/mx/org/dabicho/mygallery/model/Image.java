@@ -27,6 +27,7 @@ public class Image {
     private String mImageDataStream;
     private String mThumbnailDataStream;
 
+
     public long getImageId() {
         return mImageId;
     }
@@ -73,7 +74,7 @@ public class Image {
             ExifInterface exif = new ExifInterface(mImageDataStream);
             return ImageUtils.rotateBitmap(exif, thumbnail);
         } catch(IOException e){
-            Log.e(TAG, "getThumbnail: Could Not Open Image ",e);
+            e(TAG, "getThumbnail: Could Not Open Image ", e);
             return null;
         }
     }
@@ -104,4 +105,17 @@ public class Image {
                 ", thumbnailDataStream='" + mThumbnailDataStream + '\'' +
                 '}';
     }
+
+    public ExifInterface loadExif(){
+        ExifInterface exifData=null;
+        try {
+            exifData = new ExifInterface(mImageDataStream);
+            
+        }catch (IOException e){
+            e(TAG, "getExifData: Error looking for exif information for "+mImageDataStream,e );
+        }
+        return exifData;
+    }
+    
+
 }

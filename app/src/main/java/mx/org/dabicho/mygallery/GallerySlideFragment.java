@@ -3,24 +3,22 @@ package mx.org.dabicho.mygallery;
 import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import mx.org.dabicho.mygallery.model.Image;
-import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.CurrentImageList;
-import mx.org.dabicho.mygallery.util.ImageUtils;
 
 import static android.util.Log.i;
 
@@ -36,6 +34,9 @@ public class GallerySlideFragment extends Fragment {
     private String mTitle;
     private int mPosition;
     private ImageView mImageView;
+    private ExifInterface exif=null;
+    private boolean mExifVisible=false;
+    private TextView mBottomTextView;
 
     public static GallerySlideFragment newInstance(int position) {
         GallerySlideFragment fragment = new GallerySlideFragment();
@@ -69,14 +70,16 @@ public class GallerySlideFragment extends Fragment {
 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_gallery_slide,
                 container, false);
-
-         mImageView = (ImageView) rootView.findViewById(R.id.imageView);
+        mBottomTextView =(TextView)rootView.findViewById(R.id.image_bottom_textView);
+        mImageView = (ImageView) rootView.findViewById(R.id.imageView);
         // Buscamos la imagen en el cache
-        String imageFilename=mImages.get(mPosition).getImageDataStream();
+        String imageFilename = mImages.get(mPosition).getImageDataStream();
 
 
-            mImageView.setImageResource(R.drawable.templates);
-            return rootView;
+        mImageView.setImageResource(R.drawable.templates);
+
+
+        return rootView;
 
 
         /* ----------------------------- */
@@ -87,7 +90,10 @@ public class GallerySlideFragment extends Fragment {
 
     }
 
-    public void setBitmap(Bitmap bitmap){
+
+
+
+    public void setBitmap(Bitmap bitmap) {
         mImageView.setImageBitmap(bitmap);
 
     }
@@ -98,5 +104,7 @@ public class GallerySlideFragment extends Fragment {
         super.onAttach(activity);
 
     }
+
+
 }
 
