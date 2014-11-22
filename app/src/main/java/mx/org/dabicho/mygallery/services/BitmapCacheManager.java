@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 import android.util.LruCache;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class BitmapCacheManager {
 
 
     private BitmapCacheManager() {
-        lruCache = new LruCache<String, Bitmap>(24*1024*1024){
+        lruCache = new LruCache<String, Bitmap>(24 * 1024 * 1024) {
             /**
              * Remove a bitmap from the cache
              * If its referenced 0 times, it should be recycled.
@@ -55,11 +56,10 @@ public class BitmapCacheManager {
     }
 
     /**
-     *
      * @return An instance of this cache manager
      */
     static public BitmapCacheManager getInstance() {
-        if (cacheManager == null) {
+        if(cacheManager == null) {
             cacheManager = new BitmapCacheManager();
         }
         return cacheManager;
@@ -67,18 +67,33 @@ public class BitmapCacheManager {
 
     /**
      * Adds a bitmap to the cache and sets its ref. count to 0
-     * @param key
-     * @param value
+     *
+     * @param key the key to the bitmap (usually a full path)
+     * @param value the corresponding bitmap
      */
     public void put(String key, Bitmap value) {
 
         lruCache.put(key, value);
     }
 
+    /**
+     * Gets an entry from the cache
+     * @param key the key to the bitmap (usually a full path)
+     * @return the corresponding bitmap
+     */
     public Bitmap get(String key) {
 
         return lruCache.get(key);
     }
 
-
+    /**
+     * Removes an Recycles a bitmap from the cache
+     * @param key the key to the bitmap (usually a full path)
+     */
+    public void remove(String key) {
+        Log.i(TAG, "remove: " + key);
+        Bitmap bitmap = lruCache.remove(key);
+        if(bitmap != null)
+            bitmap.recycle();
+    }
 }

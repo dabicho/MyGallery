@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mx.org.dabicho.mygallery.model.Image;
+import mx.org.dabicho.mygallery.services.BitmapCacheManager;
 import mx.org.dabicho.mygallery.util.CurrentImageList;
 
 import static android.util.Log.i;
@@ -37,6 +39,7 @@ public class GallerySlideFragment extends Fragment {
     private ExifInterface exif=null;
     private boolean mExifVisible=false;
     private TextView mBottomTextView;
+    private String mCacheKey;
 
     public static GallerySlideFragment newInstance(int position) {
         GallerySlideFragment fragment = new GallerySlideFragment();
@@ -61,6 +64,7 @@ public class GallerySlideFragment extends Fragment {
             mPosition = 0;
         mImages = new ArrayList<Image>(CurrentImageList.getInstance().getImages());
         mTitle = CurrentImageList.getInstance().getTitle();
+        mCacheKey=mImages.get(mPosition).getImageDataStream();
 
     }
 
@@ -91,10 +95,16 @@ public class GallerySlideFragment extends Fragment {
     }
 
 
-
-
-    public void setBitmap(Bitmap bitmap) {
+    /**
+     * Sets a bitmap to the fragment and saves it's cacheKey to remove it from the cache when the
+     * fragment is detached
+     * @param bitmap The bitmap that this fragment displays
+     * @param cacheKey its key into the cache
+     */
+    public void setBitmap(Bitmap bitmap, String cacheKey) {
         mImageView.setImageBitmap(bitmap);
+        Log.i(TAG, "setBitmap: " + mCacheKey + " to " + cacheKey);
+        mCacheKey=cacheKey;
 
     }
 
@@ -105,6 +115,10 @@ public class GallerySlideFragment extends Fragment {
 
     }
 
-
+    @Override
+    public void onDetach() {
+        BitmapCacheManager.getInstance().remove(mCacheKey);
+        super.onDetach();
+    }
 }
 

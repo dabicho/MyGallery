@@ -57,7 +57,12 @@ public class ImageUtils {
             return calculateMaxInSampleSize(options, reqWidth, reqHeight);
     }
 
-
+    /**
+     * Gives a re-oriented version of the bitmap. The original bitmap is recycled
+     * @param exif
+     * @param bitmap
+     * @return
+     */
     public static Bitmap rotateBitmap(ExifInterface exif, Bitmap bitmap) {
         Matrix lMatrix = new Matrix();
 

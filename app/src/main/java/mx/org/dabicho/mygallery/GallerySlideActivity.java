@@ -40,7 +40,7 @@ import static android.util.Log.i;
 public class GallerySlideActivity extends Activity {
     private static final String TAG = "GallerySlideActivity";
 
-    private static final int NUM_PAGES = 5;
+    private static final int NUM_PAGES = 3;
     private ViewPager mViewPager;
     private FragmentStatePagerAdapter mPagerAdapter;
     private GallerySlideFragment mFragment;
@@ -54,7 +54,7 @@ public class GallerySlideActivity extends Activity {
         mViewPager = (ViewPager) findViewById(R.id.gallery_slide_pager);
         mPagerAdapter = new GallerySlideFragmentStatePagerAdapter(getFragmentManager());
         mImageDataTextView = (TextView) findViewById(R.id.image_bottom_textView);
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(NUM_PAGES);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(CurrentImageList.getInstance().getCurrentPosition());
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -98,7 +98,6 @@ public class GallerySlideActivity extends Activity {
     }
 
     class GallerySlideFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
-        Fragment[] paginas = new Fragment[5];
 
 
         public GallerySlideFragmentStatePagerAdapter(FragmentManager fragmentManager) {
@@ -112,11 +111,17 @@ public class GallerySlideActivity extends Activity {
             GallerySlideFragment gallerySlideFragment;
             gallerySlideFragment = GallerySlideFragment.newInstance(i);
             CurrentImageList.getInstance().setCurrentPosition(i);
+            if(BitmapCacheManager.getInstance().get(CurrentImageList.getInstance().getImages()
+                    .get(i).getImageDataStream()) == null) {
 
-            ImageLoader imageLoader = new ImageLoader(i, gallerySlideFragment);
-            i(TAG, "getItem: Starting imageLoader");
-            imageLoader.execute();
-            i(TAG, "getItem: imageLoader started");
+                ImageLoader imageLoader = new ImageLoader(i, gallerySlideFragment);
+                i(TAG, "getItem: Starting imageLoader");
+                imageLoader.execute();
+                i(TAG, "getItem: imageLoader started");
+            } else
+                gallerySlideFragment.setBitmap(BitmapCacheManager.getInstance().get(CurrentImageList.getInstance().getImages()
+                        .get(i).getImageDataStream()), CurrentImageList.getInstance().getImages()
+                        .get(i).getImageDataStream());
             return gallerySlideFragment;
 
         }
@@ -151,12 +156,11 @@ public class GallerySlideActivity extends Activity {
 
 
             i(TAG, "doInBackground: " + mImage.getImageDataStream());
-            Bitmap bitmap = null;//BitmapCacheManager.getInstance().get(mImage.getImageDataStream());
+            Bitmap bitmap = BitmapCacheManager.getInstance().get(mImage.getImageDataStream());
 
-                mImage.loadExif();
-            ExifInterface exif = mImage.loadExif();
 
-            if (bitmap == null) {
+            if(bitmap == null) {
+                ExifInterface exif = mImage.loadExif();
                 BitmapFactory.Options lOptions = new BitmapFactory.Options();
                 lOptions.inJustDecodeBounds = true;
 
@@ -171,21 +175,22 @@ public class GallerySlideActivity extends Activity {
 
                 i(TAG, "onCreateView: SampleSize: " + lOptions.inSampleSize);
                 lOptions.inJustDecodeBounds = false;
-                if (exif != null)
+                if(exif != null)
                     bitmap = ImageUtils.rotateBitmap(exif,
                             BitmapFactory.decodeFile(mImage.getImageDataStream(), lOptions));
                 else
                     bitmap = BitmapFactory.decodeFile(mImage.getImageDataStream(), lOptions);
-                //BitmapCacheManager.getInstance().put(mImage.getImageDataStream(),
-                //        bitmap);
+                BitmapCacheManager.getInstance().put(mImage.getImageDataStream(),
+                        bitmap);
             }
-
+            System.gc();
             return bitmap;
         }
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            mGallerySlideFragment.setBitmap(bitmap);
+            mGallerySlideFragment.setBitmap(bitmap,
+                    mImage.getImageDataStream());
         }
     }
 
@@ -206,8 +211,8 @@ public class GallerySlideActivity extends Activity {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             i(TAG, "onSingleTapConfirmed: ");
-            mDataVisible=!mDataVisible;
-            if (mDataVisible) {
+            mDataVisible = !mDataVisible;
+            if(mDataVisible) {
                 mImageDataTextView.setVisibility(View.VISIBLE);
             } else
                 mImageDataTextView.setVisibility(View.INVISIBLE);
