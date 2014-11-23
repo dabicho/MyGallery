@@ -59,7 +59,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                         galleryQueryProjection, MediaStore.Images.ImageColumns.BUCKET_ID +
                                 " = ? ", galleryQuerySelectionArgs,
-                        MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME + " asc");
+                        MediaStore.Images.ImageColumns.DATA + " asc");
                 i(TAG, "loadInBackground: " + lCursor.getCount());
 
                 break;
