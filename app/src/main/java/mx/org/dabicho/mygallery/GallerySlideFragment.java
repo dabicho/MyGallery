@@ -109,14 +109,10 @@ public class GallerySlideFragment extends Fragment {
     public void setBitmap(Bitmap bitmap, String cacheKey) {
         Log.i(TAG, "setBitmap: " + mCacheKey);
         if(mImageView==null ) {
-            Log.i(TAG,"setBitmap: ImageView was null for "+mCacheKey);
+            // If the imageview is null, the fragment has probably been detached
             return;
-
-
         }
         mImageView.setImageBitmap(bitmap);
-
-
         mCacheKey=cacheKey;
 
     }

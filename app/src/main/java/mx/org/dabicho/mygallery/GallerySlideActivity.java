@@ -40,10 +40,10 @@ import static android.util.Log.i;
 public class GallerySlideActivity extends Activity {
     private static final String TAG = "GallerySlideActivity";
 
-    private static final int NUM_PAGES = 1;
+    private static final int NUM_PAGES = 2;
     private ViewPager mViewPager;
     private FragmentStatePagerAdapter mPagerAdapter;
-    private GallerySlideFragment mFragment;
+
     private TextView mImageDataTextView;
     private boolean mDataVisible;
 
@@ -112,11 +112,11 @@ public class GallerySlideActivity extends Activity {
             gallerySlideFragment = GallerySlideFragment.newInstance(i);
             CurrentImageList.getInstance().setCurrentPosition(i);
 
-            Bitmap bitmap=BitmapCacheManager.getInstance().get(CurrentImageList.getInstance()
+            Bitmap bitmap = BitmapCacheManager.getInstance().get(CurrentImageList.getInstance()
                     .getImages()
-                    .get(i).getImageDataStream()) ;
+                    .get(i).getImageDataStream());
 
-            if(bitmap== null) {
+            if(bitmap == null) {
 
                 ImageLoader imageLoader = new ImageLoader(i, gallerySlideFragment);
                 i(TAG, "getItem: Starting imageLoader");
@@ -192,8 +192,9 @@ public class GallerySlideActivity extends Activity {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            mGallerySlideFragment.setBitmap(bitmap,
-                    mImage.getImageDataStream());
+            if(mGallerySlideFragment != null)
+                mGallerySlideFragment.setBitmap(bitmap,
+                        mImage.getImageDataStream());
         }
     }
 
