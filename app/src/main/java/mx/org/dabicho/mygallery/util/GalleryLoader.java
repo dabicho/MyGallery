@@ -3,15 +3,18 @@ package mx.org.dabicho.mygallery.util;
 import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import mx.org.dabicho.mygallery.model.GalleryType;
 import mx.org.dabicho.mygallery.model.Image;
 
+import static android.util.Log.e;
 import static android.util.Log.i;
 
 /**
@@ -76,6 +79,9 @@ public class GalleryLoader extends DataLoader<List<Image>> {
             Image image = new Image();
             image.setImageId(lCursor.getLong(0));
             image.setImageDataStream(lCursor.getString(1));
+
+
+
             //image.queryThumbnailDataStream(getContext().getContentResolver());
             //image.setThumbnailDataStream(lCursor.getString(2));
 

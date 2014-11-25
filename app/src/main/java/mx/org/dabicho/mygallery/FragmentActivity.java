@@ -69,7 +69,7 @@ public abstract class FragmentActivity extends Activity {
         }
         */
     }
-
+// TODO set a timer to go back to fullscreen
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);

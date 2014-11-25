@@ -37,6 +37,7 @@ import static android.util.Log.i;
 /**
  * Activity for the presentation of images from a gallery in fullscreen
  */
+//TODO implement fullscreen
 public class GallerySlideActivity extends Activity {
     private static final String TAG = "GallerySlideActivity";
 
@@ -67,8 +68,10 @@ public class GallerySlideActivity extends Activity {
             @Override
             public void onPageSelected(int i) {
                 i(TAG, "onPageSelected: ");
-                mImageDataTextView.setText(new File(CurrentImageList.getInstance().getImages().
-                        get(i).getImageDataStream()).getName());
+                Image image=CurrentImageList.getInstance().getImages().
+                        get(i);
+                mImageDataTextView.setText(new File(image.getImageDataStream()).getName()+"\n"+
+                image.getLocalDate()+"\n"+image.getUtcDate());
             }
 
             @Override
@@ -138,12 +141,20 @@ public class GallerySlideActivity extends Activity {
 
     }
 
-
+    /**
+     * This loader is in charge of loading an image into a bitmap in the background and displaying
+     * it in it's correspondig fragment.
+     */
     private class ImageLoader extends AsyncTask<Integer, Void, Bitmap> {
         Image mImage;
         int mImageIdx;
         GallerySlideFragment mGallerySlideFragment;
 
+        /**
+         *
+         * @param imageIdx The index for the image data inside the gallery
+         * @param gallerySlideFragment the GallerySlideFragment which will display the image
+         */
         ImageLoader(int imageIdx, GallerySlideFragment gallerySlideFragment) {
             mImageIdx = imageIdx;
             mImage = CurrentImageList.getInstance().getImages().get(mImageIdx);
@@ -201,7 +212,8 @@ public class GallerySlideActivity extends Activity {
     /**
      * Gesture listener to detect double tap and single tap.
      * A single tap will set the visibility and animation of some elements that display over the
-     * image fragment.
+     * image fragment. This elements contain data about the image and some actions that can be
+     * taken on the image
      * A double tap will
      */
     class GestureListener extends GestureDetector.SimpleOnGestureListener {
