@@ -10,11 +10,9 @@
         android:id="@+id/gallery_slide_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-    <TextView
-        android:id="@+id/image_bottom_textView"
-        android:visibility="invisible"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="info goes here"
-        android:layout_gravity="bottom"/>
+        android:layout_gravity="bottom">
+        </LinearLayout>
 </FrameLayout>
