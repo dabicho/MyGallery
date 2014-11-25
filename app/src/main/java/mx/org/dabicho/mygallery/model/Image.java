@@ -154,14 +154,15 @@ public class Image {
         mAlt = alt;
     }
 
-    public void loadExif(){
+    public ExifInterface loadExif(){
         try {
             ExifInterface exif=new ExifInterface(mImageDataStream);
             mUtcDate=exif.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
             mLocalDate=exif.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
-
+            return exif;
         }catch (IOException e){
             e(TAG, "loadInBackground: Could not read exif data",e );
+            return null;
         }
     }
 
