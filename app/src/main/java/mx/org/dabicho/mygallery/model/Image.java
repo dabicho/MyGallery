@@ -29,8 +29,8 @@ public class Image {
     private String mThumbnailDataStream;
     private String mLocalDate;
     private String mUtcDate;
-    private double mLat;
-    private double mLong;
+    private float[] mLatLong=new float[2];
+
     private double mAlt;
 
 
@@ -130,20 +130,20 @@ public class Image {
         mUtcDate = utcDate;
     }
 
-    public double getLat() {
-        return mLat;
+    public float getLat() {
+        return mLatLong[0];
     }
 
-    public void setLat(double lat) {
-        mLat = lat;
+    public void setLat(float lat) {
+        mLatLong[0] = lat;
     }
 
-    public double getLong() {
-        return mLong;
+    public float getLong() {
+        return mLatLong[1];
     }
 
-    public void setLong(double aLong) {
-        mLong = aLong;
+    public void setLong(float aLong) {
+        mLatLong[1] = aLong;
     }
 
     public double getAlt() {
@@ -158,7 +158,9 @@ public class Image {
         try {
             ExifInterface exif=new ExifInterface(mImageDataStream);
             mUtcDate=exif.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
-            mLocalDate=exif.getAttribute(ExifInterface.TAG_GPS_DATESTAMP);
+            mLocalDate=exif.getAttribute(ExifInterface.TAG_DATETIME);
+            exif.getLatLong(mLatLong);
+            mAlt=exif.getAltitude(2000);
             return exif;
         }catch (IOException e){
             e(TAG, "loadInBackground: Could not read exif data",e );
