@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import mx.org.dabicho.mygallery.util.ImageUtils;
@@ -27,12 +28,14 @@ public class Image {
     private long mImageId;
     private String mImageDataStream;
     private String mThumbnailDataStream;
-    private String mLocalDate;
-    private String mUtcDate;
-    private float[] mLatLong=new float[2];
+
+    private String mDateTimeOriginal;
+    private String gpsDateTime;
+    private float[] mLatLong = new float[2];
 
     private double mAlt;
 
+    private boolean exifLoaded = false;
 
     public long getImageId() {
         return mImageId;
@@ -62,9 +65,8 @@ public class Image {
             mThumbnailDataStream = cursor.getString(0);
 
 
-
         } else {
-            mThumbnailDataStream=null;
+            mThumbnailDataStream = null;
         }
         cursor.close();
 
@@ -72,30 +74,30 @@ public class Image {
 
     }
 
-    public Bitmap getThumbnail(ContentResolver contentResolver){
+    public Bitmap getThumbnail(ContentResolver contentResolver) {
         try {
             BitmapFactory.Options lOptions = new BitmapFactory.Options();
             Bitmap thumbnail = MediaStore.Images.Thumbnails.getThumbnail(contentResolver, mImageId,
                     MediaStore.Images.Thumbnails.MINI_KIND, lOptions);
             ExifInterface exif = new ExifInterface(mImageDataStream);
             return ImageUtils.rotateBitmap(exif, thumbnail);
-        } catch(IOException e){
+        } catch (IOException e) {
             e(TAG, "getThumbnail: Could Not Open Image ", e);
             return null;
         }
     }
 
-    public Bitmap getThumbnail(){
+    public Bitmap getThumbnail() {
 
         try {
             if (mThumbnailDataStream != null) {
                 ExifInterface exif = new ExifInterface(mImageDataStream);
-                return ImageUtils.rotateBitmap(exif,BitmapFactory.decodeFile(mThumbnailDataStream));
+                return ImageUtils.rotateBitmap(exif, BitmapFactory.decodeFile(mThumbnailDataStream));
             }
-        }catch (IOException e){
-            e(TAG, "getThumbnail: Could not open file",e );
+        } catch (IOException e) {
+            e(TAG, "getThumbnail: Could not open file", e);
         }
-         return null;
+        return null;
     }
 
 
@@ -112,23 +114,6 @@ public class Image {
                 '}';
     }
 
-
-
-    public String getLocalDate() {
-        return mLocalDate;
-    }
-
-    public void setLocalDate(String localDate) {
-        mLocalDate = localDate;
-    }
-
-    public String getUtcDate() {
-        return mUtcDate;
-    }
-
-    public void setUtcDate(String utcDate) {
-        mUtcDate = utcDate;
-    }
 
     public float getLat() {
         return mLatLong[0];
@@ -154,17 +139,49 @@ public class Image {
         mAlt = alt;
     }
 
-    public ExifInterface loadExif(){
+    public String getDateTimeOriginal() {
+        i(TAG, "getDateTimeOriginal: "+mDateTimeOriginal);
+        return mDateTimeOriginal;
+    }
+
+    public void setDateTimeOriginal(String dateTimeOriginal) {
+        mDateTimeOriginal = dateTimeOriginal;
+    }
+
+    public ExifInterface loadExif() {
         try {
-            ExifInterface exif=new ExifInterface(mImageDataStream);
-            mUtcDate=exif.getAttribute(ExifInterface.TAG_GPS_TIMESTAMP);
-            mLocalDate=exif.getAttribute(ExifInterface.TAG_DATETIME);
-            exif.getLatLong(mLatLong);
-            mAlt=exif.getAltitude(2000);
+            ExifInterface exif = new ExifInterface(mImageDataStream);
+            // This Tag posibly refers to exif DateTimeOriginal
+            if (!exifLoaded) {
+                mDateTimeOriginal = exif.getAttribute(ExifInterface.TAG_DATETIME);
+                i(TAG, "loadExif: "+mDateTimeOriginal);
+
+                exif.getLatLong(mLatLong);
+                mAlt = exif.getAltitude(2000);
+                exifLoaded = true;
+            }
             return exif;
-        }catch (IOException e){
-            e(TAG, "loadInBackground: Could not read exif data",e );
+        } catch (IOException e) {
+            e(TAG, "loadInBackground: Could not read exif data", e);
             return null;
+        }
+    }
+
+    public void updateExif() {
+        try {
+            ExifInterface exif = new ExifInterface(mImageDataStream);
+            // This Tag posibly refers to exif DateTimeOriginal
+
+            mDateTimeOriginal = exif.getAttribute(ExifInterface.TAG_DATETIME);
+
+            exif.getLatLong(mLatLong);
+            mAlt = exif.getAltitude(2000);
+            exifLoaded = true;
+
+
+        } catch (IOException e) {
+            e(TAG, "loadInBackground: Could not read exif data", e);
+
         }
     }
 

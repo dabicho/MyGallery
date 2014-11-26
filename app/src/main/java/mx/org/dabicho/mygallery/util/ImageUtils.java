@@ -13,6 +13,8 @@ import static android.util.Log.e;
 public class ImageUtils {
     private static final String TAG = "ImageUtils";
 
+
+
     public static int calculateMaxInSampleSize(BitmapFactory.Options options, int reqWidth,
                                                int reqHeight) {
         final int height = options.outHeight;

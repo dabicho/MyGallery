@@ -11,8 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
     <LinearLayout
+        android:id="@+id/slide_data_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom">
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
         </LinearLayout>
 </FrameLayout>

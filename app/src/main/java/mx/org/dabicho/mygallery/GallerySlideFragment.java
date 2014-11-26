@@ -7,15 +7,11 @@ import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -39,9 +35,9 @@ public class GallerySlideFragment extends Fragment {
     private String mTitle;
     private int mPosition;
     private ImageView mImageView;
-    private ExifInterface exif=null;
-    private boolean mExifVisible=false;
-    private TextView mBottomTextView;
+
+
+
     private String mCacheKey;
 
     public static GallerySlideFragment newInstance(int position) {
@@ -78,7 +74,7 @@ public class GallerySlideFragment extends Fragment {
         Log.i(TAG,"onCreateView: "+mCacheKey);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_gallery_slide,
                 container, false);
-        mBottomTextView =(TextView)rootView.findViewById(R.id.image_bottom_textView);
+
         mImageView = (ImageView) rootView.findViewById(R.id.imageView);
 
         // Buscamos la imagen en el cache

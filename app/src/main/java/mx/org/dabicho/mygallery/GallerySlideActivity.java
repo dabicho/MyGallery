@@ -19,6 +19,8 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -32,6 +34,7 @@ import mx.org.dabicho.mygallery.util.CurrentImageList;
 import mx.org.dabicho.mygallery.util.ImageUtils;
 
 import static android.util.Log.i;
+import static android.util.Log.v;
 
 
 /**
@@ -45,7 +48,8 @@ public class GallerySlideActivity extends Activity {
     private ViewPager mViewPager;
     private FragmentStatePagerAdapter mPagerAdapter;
 
-    private TextView mImageDataTextView;
+    private LinearLayout mImageDataView;
+
     private boolean mDataVisible;
 
     @Override
@@ -54,7 +58,12 @@ public class GallerySlideActivity extends Activity {
         setContentView(R.layout.fragment_gallery_slide_view_pager);
         mViewPager = (ViewPager) findViewById(R.id.gallery_slide_pager);
         mPagerAdapter = new GallerySlideFragmentStatePagerAdapter(getFragmentManager());
-        mImageDataTextView = (TextView) findViewById(R.id.image_bottom_textView);
+
+        mImageDataView=(LinearLayout)findViewById(R.id.slide_data_linearLayout);
+
+
+
+
         mViewPager.setOffscreenPageLimit(NUM_PAGES);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setCurrentItem(CurrentImageList.getInstance().getCurrentPosition());
@@ -68,10 +77,12 @@ public class GallerySlideActivity extends Activity {
             @Override
             public void onPageSelected(int i) {
                 i(TAG, "onPageSelected: ");
-                Image image=CurrentImageList.getInstance().getImages().
-                        get(i);
-                mImageDataTextView.setText(new File(image.getImageDataStream()).getName()+"\n"+
-                image.getLocalDate()+"\n"+image.getUtcDate());
+                if(mDataVisible) {
+                    Image image = CurrentImageList.getInstance().getImages().
+                            get(i);
+                    updateDataView(image);
+                }
+
             }
 
             @Override
@@ -91,7 +102,22 @@ public class GallerySlideActivity extends Activity {
         });
 
         CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()).loadExif();
-        mImageDataTextView.setText(CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()).getImageDataStream());
+
+    }
+
+    void updateDataView(Image image){
+        mImageDataView.removeAllViews();
+        View view=getLayoutInflater().inflate(R.layout.image_detail,null);
+
+        TextView textView=(TextView)view.findViewById(R.id.detail_textView);
+        textView.setText(image.getDateTimeOriginal());
+        mImageDataView.addView(view);
+
+        view=getLayoutInflater().inflate(R.layout.image_detail,null);
+        textView=(TextView)view.findViewById(R.id.detail_textView);
+        textView.setText(new File(image.getImageDataStream()).getName());
+
+        mImageDataView.addView(view);
     }
 
 
@@ -229,9 +255,11 @@ public class GallerySlideActivity extends Activity {
             i(TAG, "onSingleTapConfirmed: ");
             mDataVisible = !mDataVisible;
             if(mDataVisible) {
-                mImageDataTextView.setVisibility(View.VISIBLE);
+                updateDataView(CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()));
+                mImageDataView.setVisibility(View.VISIBLE);
+
             } else
-                mImageDataTextView.setVisibility(View.INVISIBLE);
+                mImageDataView.setVisibility(View.INVISIBLE);
             return true;
         }
 
