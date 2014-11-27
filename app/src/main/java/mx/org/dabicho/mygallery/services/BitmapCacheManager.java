@@ -26,7 +26,7 @@ public class BitmapCacheManager {
 
     static private BitmapCacheManager cacheManager;
 
-    private LruCache<String, Bitmap> lruCache;
+    private final LruCache<String, Bitmap> lruCache;
 
 
     private BitmapCacheManager() {
@@ -58,8 +58,8 @@ public class BitmapCacheManager {
     /**
      * @return An instance of this cache manager
      */
-    static public BitmapCacheManager getInstance() {
-        if(cacheManager == null) {
+    static synchronized public BitmapCacheManager getInstance() {
+        if (cacheManager == null) {
             cacheManager = new BitmapCacheManager();
         }
         return cacheManager;
@@ -68,32 +68,39 @@ public class BitmapCacheManager {
     /**
      * Adds a bitmap to the cache and sets its ref. count to 0
      *
-     * @param key the key to the bitmap (usually a full path)
+     * @param key   the key to the bitmap (usually a full path)
      * @param value the corresponding bitmap
      */
     public void put(String key, Bitmap value) {
-
-        lruCache.put(key, value);
+        synchronized (lruCache) {
+            lruCache.put(key, value);
+        }
     }
 
     /**
      * Gets an entry from the cache
+     *
      * @param key the key to the bitmap (usually a full path)
      * @return the corresponding bitmap
      */
     public Bitmap get(String key) {
-
-        return lruCache.get(key);
+        synchronized (lruCache) {
+            return lruCache.get(key);
+        }
     }
 
     /**
-     * Removes an Recycles a bitmap from the cache
+     * Removes and Recycles a bitmap from the cache
+     *
      * @param key the key to the bitmap (usually a full path)
      */
     public void remove(String key) {
         Log.i(TAG, "remove: " + key);
-        Bitmap bitmap = lruCache.remove(key);
-        if(bitmap != null)
+        Bitmap bitmap;
+        synchronized (lruCache) {
+            bitmap = lruCache.remove(key);
+        }
+        if (bitmap != null)
             bitmap.recycle();
     }
 }
