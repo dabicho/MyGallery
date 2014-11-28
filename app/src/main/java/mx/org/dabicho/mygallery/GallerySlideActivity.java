@@ -59,9 +59,7 @@ public class GallerySlideActivity extends Activity {
         mViewPager = (ViewPager) findViewById(R.id.gallery_slide_pager);
         mPagerAdapter = new GallerySlideFragmentStatePagerAdapter(getFragmentManager());
 
-        mImageDataView=(LinearLayout)findViewById(R.id.slide_data_linearLayout);
-
-
+        mImageDataView = (LinearLayout) findViewById(R.id.slide_data_linearLayout);
 
 
         mViewPager.setOffscreenPageLimit(NUM_PAGES);
@@ -71,13 +69,13 @@ public class GallerySlideActivity extends Activity {
 
             @Override
             public void onPageScrolled(int i, float v, int i2) {
-                i(TAG, "onPageScrolled: ");
+
             }
 
             @Override
             public void onPageSelected(int i) {
-                i(TAG, "onPageSelected: ");
-                if(mDataVisible) {
+
+                if (mDataVisible) {
                     Image image = CurrentImageList.getInstance().getImages().
                             get(i);
                     updateDataView(image);
@@ -87,7 +85,7 @@ public class GallerySlideActivity extends Activity {
 
             @Override
             public void onPageScrollStateChanged(int i) {
-                i(TAG, "onPageScrollStateChanged: ");
+
             }
         });
 
@@ -101,7 +99,7 @@ public class GallerySlideActivity extends Activity {
 
         });
 
-        CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()).loadExif();
+        CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()).loadExif(GallerySlideActivity.this);
 
     }
 
@@ -119,16 +117,24 @@ public class GallerySlideActivity extends Activity {
         );
     }
 
-    void updateDataView(Image image){
+    void updateDataView(Image image) {
         mImageDataView.removeAllViews();
-        View view=getLayoutInflater().inflate(R.layout.image_detail,null);
+        View view = getLayoutInflater().inflate(R.layout.image_detail, null);
 
-        TextView textView=(TextView)view.findViewById(R.id.detail_textView);
+        TextView textView;
+
+        textView = (TextView) view.findViewById(R.id.detail_textView);
+        textView.setText(image.getLocation(GallerySlideActivity.this));
+        mImageDataView.addView(view);
+
+        view = getLayoutInflater().inflate(R.layout.image_detail, null);
+
+        textView = (TextView) view.findViewById(R.id.detail_textView);
         textView.setText(image.getDateTimeOriginal());
         mImageDataView.addView(view);
 
-        view=getLayoutInflater().inflate(R.layout.image_detail,null);
-        textView=(TextView)view.findViewById(R.id.detail_textView);
+        view = getLayoutInflater().inflate(R.layout.image_detail, null);
+        textView = (TextView) view.findViewById(R.id.detail_textView);
         textView.setText(new File(image.getImageDataStream()).getName());
 
         mImageDataView.addView(view);
@@ -159,7 +165,7 @@ public class GallerySlideActivity extends Activity {
                     .getImages()
                     .get(i).getImageDataStream());
 
-            if(bitmap == null) {
+            if (bitmap == null) {
 
                 ImageLoader imageLoader = new ImageLoader(i, gallerySlideFragment);
                 i(TAG, "getItem: Starting imageLoader");
@@ -191,8 +197,7 @@ public class GallerySlideActivity extends Activity {
         GallerySlideFragment mGallerySlideFragment;
 
         /**
-         *
-         * @param imageIdx The index for the image data inside the gallery
+         * @param imageIdx             The index for the image data inside the gallery
          * @param gallerySlideFragment the GallerySlideFragment which will display the image
          */
         ImageLoader(int imageIdx, GallerySlideFragment gallerySlideFragment) {
@@ -213,8 +218,8 @@ public class GallerySlideActivity extends Activity {
             Bitmap bitmap = BitmapCacheManager.getInstance().get(mImage.getImageDataStream());
 
 
-            if(bitmap == null) {
-                ExifInterface exif = mImage.loadExif();
+            if (bitmap == null) {
+                ExifInterface exif = mImage.loadExif(GallerySlideActivity.this);
                 BitmapFactory.Options lOptions = new BitmapFactory.Options();
                 lOptions.inJustDecodeBounds = true;
 
@@ -229,7 +234,7 @@ public class GallerySlideActivity extends Activity {
 
                 i(TAG, "onCreateView: SampleSize: " + lOptions.inSampleSize);
                 lOptions.inJustDecodeBounds = false;
-                if(exif != null)
+                if (exif != null)
                     bitmap = ImageUtils.rotateBitmap(exif,
                             BitmapFactory.decodeFile(mImage.getImageDataStream(), lOptions));
                 else
@@ -243,7 +248,7 @@ public class GallerySlideActivity extends Activity {
 
         @Override
         protected void onPostExecute(Bitmap bitmap) {
-            if(mGallerySlideFragment != null)
+            if (mGallerySlideFragment != null)
                 mGallerySlideFragment.setBitmap(bitmap,
                         mImage.getImageDataStream());
         }
@@ -268,7 +273,7 @@ public class GallerySlideActivity extends Activity {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             i(TAG, "onSingleTapConfirmed: ");
             mDataVisible = !mDataVisible;
-            if(mDataVisible) {
+            if (mDataVisible) {
                 updateDataView(CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()));
                 mImageDataView.setVisibility(View.VISIBLE);
 

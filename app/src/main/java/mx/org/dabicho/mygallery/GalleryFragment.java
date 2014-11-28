@@ -98,8 +98,18 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
         mThumbnailLoader.setListener(new ThumbnailLoader.Listener<ImageView>() {
             @Override
             public void onThumbnailLoaded(ImageView imageView, Bitmap thumbnail) {
-                if(isVisible())
+                if(isVisible()) {
+
                     imageView.setImageBitmap(thumbnail);
+                    AnimationSet set = new AnimationSet(true);
+                    AlphaAnimation lAlphaAnimation = new AlphaAnimation(0.0F,1F);
+                    //ScaleAnimation lScaleAnimation =new ScaleAnimation(0.2F,1F,0.2F,1F);
+                    lAlphaAnimation.setDuration(600);
+                    //lScaleAnimation.setDuration(600);
+                    set.addAnimation(lAlphaAnimation);
+                    //set.addAnimation(lScaleAnimation);
+                    imageView.startAnimation(set);
+                }
             }
         });
         mThumbnailLoader.start();
@@ -148,17 +158,18 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
                     mThumbnailLoader.dequeueThumbnail(imageView);
                     imageView.setImageBitmap(
                             BitmapCacheManager.getInstance().get(image.getThumbnailDataStream()));
+                    AnimationSet set = new AnimationSet(true);
+                    AlphaAnimation lAlphaAnimation = new AlphaAnimation(0.0F,1F);
+                    //ScaleAnimation lScaleAnimation =new ScaleAnimation(0.2F,1F,0.2F,1F);
+                    lAlphaAnimation.setDuration(600);
+                    //lScaleAnimation.setDuration(600);
+                    set.addAnimation(lAlphaAnimation);
+                    //set.addAnimation(lScaleAnimation);
+                    convertView.startAnimation(set);
                 }
 
 
-                AnimationSet set = new AnimationSet(true);
-                AlphaAnimation lAlphaAnimation = new AlphaAnimation(0.2F,1F);
-                ScaleAnimation lScaleAnimation =new ScaleAnimation(0.2F,1F,0.2F,1F);
-                lAlphaAnimation.setDuration(600);
-                lScaleAnimation.setDuration(600);
-                set.addAnimation(lAlphaAnimation);
-                set.addAnimation(lScaleAnimation);
-                convertView.startAnimation(set);
+
                 return convertView;
 
             }

@@ -153,7 +153,8 @@ public class ThumbnailLoader<Token> extends HandlerThread {
         requestMap.put(token, image);
         {
             Message message=mHandler.obtainMessage(MESSAGE_LOAD,token);
-            mHandler.sendMessageAtFrontOfQueue(message);
+            message.sendToTarget();
+            //mHandler.sendMessageAtFrontOfQueue(message);
         }
     }
 

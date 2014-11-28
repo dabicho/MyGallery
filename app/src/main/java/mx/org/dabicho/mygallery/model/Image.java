@@ -1,20 +1,17 @@
 package mx.org.dabicho.mygallery.model;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ExifInterface;
-import android.media.ThumbnailUtils;
-import android.net.Uri;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import mx.org.dabicho.mygallery.util.ImageUtils;
+import mx.org.dabicho.mygallery.util.StringUtils;
 
 import static android.util.Log.e;
 import static android.util.Log.i;
@@ -140,7 +137,7 @@ public class Image {
     }
 
     public String getDateTimeOriginal() {
-        i(TAG, "getDateTimeOriginal: "+mDateTimeOriginal);
+
         return mDateTimeOriginal;
     }
 
@@ -148,13 +145,13 @@ public class Image {
         mDateTimeOriginal = dateTimeOriginal;
     }
 
-    public ExifInterface loadExif() {
+    public ExifInterface loadExif(Context context) {
         try {
             ExifInterface exif = new ExifInterface(mImageDataStream);
             // This Tag posibly refers to exif DateTimeOriginal
             if (!exifLoaded) {
-                mDateTimeOriginal = exif.getAttribute(ExifInterface.TAG_DATETIME);
-                i(TAG, "loadExif: "+mDateTimeOriginal);
+                mDateTimeOriginal = StringUtils.formatExifDateTime(context, exif.getAttribute(ExifInterface.TAG_DATETIME));
+
 
                 exif.getLatLong(mLatLong);
                 mAlt = exif.getAltitude(2000);
@@ -167,7 +164,7 @@ public class Image {
         }
     }
 
-    public void updateExif() {
+    public void updateExif(Context context) {
         try {
             ExifInterface exif = new ExifInterface(mImageDataStream);
             // This Tag posibly refers to exif DateTimeOriginal
@@ -183,6 +180,10 @@ public class Image {
             e(TAG, "loadInBackground: Could not read exif data", e);
 
         }
+    }
+
+    public String getLocation(Context context){
+        return StringUtils.getCountryCity(context, mLatLong);
     }
 
 }

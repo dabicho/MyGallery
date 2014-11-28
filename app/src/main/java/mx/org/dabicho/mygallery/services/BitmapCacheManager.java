@@ -30,7 +30,7 @@ public class BitmapCacheManager {
 
 
     private BitmapCacheManager() {
-        lruCache = new LruCache<String, Bitmap>(24 * 1024 * 1024) {
+        lruCache = new LruCache<String, Bitmap>(32 * 1024 * 1024) {
             /**
              * Remove a bitmap from the cache
              * If its referenced 0 times, it should be recycled.
@@ -95,7 +95,7 @@ public class BitmapCacheManager {
      * @param key the key to the bitmap (usually a full path)
      */
     public void remove(String key) {
-        Log.i(TAG, "remove: " + key);
+
         Bitmap bitmap;
         synchronized (lruCache) {
             bitmap = lruCache.remove(key);
