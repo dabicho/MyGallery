@@ -24,6 +24,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import mx.org.dabicho.mygallery.R;
 
@@ -66,9 +67,8 @@ public class NavigationDrawerFragment extends Fragment {
     ArrayList<String> mOptions;
 
     public NavigationDrawerFragment() {
-        mOptions=new ArrayList<String>();
+        mOptions = new ArrayList<String>();
     }
-
 
 
     @Override
@@ -86,7 +86,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         // Select either the default item (0) or the last selected item.
-        Log.i(TAG, "onCreate: Posicion seleccionada"+mCurrentSelectedPosition);
+        Log.i(TAG, "onCreate: Posicion seleccionada" + mCurrentSelectedPosition);
         selectItem(mCurrentSelectedPosition);
     }
 
@@ -278,15 +278,13 @@ public class NavigationDrawerFragment extends Fragment {
         return getActivity().getActionBar();
     }
 
-    public String getOption(int index){
+    public String getOption(int index) {
         return mOptions.get(index);
     }
 
-    public void setOptions(String[] options){
+    public void setOptions(String[] options) {
         mOptions.clear();
-        for (String option:options) {
-            mOptions.add(option);
-        }
+        Collections.addAll(mOptions, options);
 
         mDrawerListView.deferNotifyDataSetChanged();
     }

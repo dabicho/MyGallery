@@ -49,7 +49,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
 
     @Override
     public List<Image> loadInBackground() {
-        boolean stopLoading=false;
+        boolean stopLoading = false;
         i(TAG, "loadInBackground: loading gallery " + mGalleryType);
         Context context = getContext();
         ArrayList<Image> images = new ArrayList<Image>();
@@ -67,36 +67,41 @@ public class GalleryLoader extends DataLoader<List<Image>> {
 
                 break;
             case ALBUM:
+
                 break;
             case QUERY:
+
                 break;
             default:
                 // Una lista vacía
-                return images;
+
         }
-        lCursor.moveToFirst();
-        while (!lCursor.isAfterLast()) {
-            Image image = new Image();
-            image.setImageId(lCursor.getLong(0));
-            image.setImageDataStream(lCursor.getString(1));
+        if (lCursor != null) {
+            lCursor.moveToFirst();
+            while (!lCursor.isAfterLast()) {
+                Image image = new Image();
+                image.setImageId(lCursor.getLong(0));
+                image.setImageDataStream(lCursor.getString(1));
 
 
+                //image.queryThumbnailDataStream(getContext().getContentResolver());
+                //image.setThumbnailDataStream(lCursor.getString(2));
 
-            //image.queryThumbnailDataStream(getContext().getContentResolver());
-            //image.setThumbnailDataStream(lCursor.getString(2));
 
+                lCursor.moveToNext();
+                images.add(image);
+                if (mUpdateInterval > 0 && mUpdateCallbacks != null &&
+                        images.size() % mUpdateInterval == 0) {
+                    stopLoading = mUpdateCallbacks.updateGallery(images);
+                }
 
-            lCursor.moveToNext();
-            images.add(image);
-            if (mUpdateInterval > 0 && mUpdateCallbacks != null &&
-                    images.size() % mUpdateInterval == 0) {
-                stopLoading = mUpdateCallbacks.updateGallery(images);
+                if (stopLoading)
+                    break;
             }
-
-            if(stopLoading)
-                break;
+            lCursor.close();
+        } else {
+            i(TAG, "loadInBackground: there is no cursor");
         }
-        lCursor.close();
         return images;
     }
 }

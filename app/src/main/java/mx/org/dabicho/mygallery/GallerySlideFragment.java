@@ -37,7 +37,6 @@ public class GallerySlideFragment extends Fragment {
     private ImageView mImageView;
 
 
-
     private String mCacheKey;
 
     public static GallerySlideFragment newInstance(int position) {
@@ -64,21 +63,18 @@ public class GallerySlideFragment extends Fragment {
             mPosition = 0;
         mImages = new ArrayList<Image>(CurrentImageList.getInstance().getImages());
         mTitle = CurrentImageList.getInstance().getTitle();
-        mCacheKey=mImages.get(mPosition).getImageDataStream();
-        Log.i(TAG,"onCreate: "+mCacheKey);
+        mCacheKey = mImages.get(mPosition).getImageDataStream();
+        Log.i(TAG, "onCreate: " + mCacheKey);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG,"onCreateView: "+mCacheKey);
+        Log.i(TAG, "onCreateView: " + mCacheKey);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_gallery_slide,
                 container, false);
 
         mImageView = (ImageView) rootView.findViewById(R.id.imageView);
-
-        // Buscamos la imagen en el cache
-        String imageFilename = mImages.get(mPosition).getImageDataStream();
 
 
         mImageView.setImageResource(R.drawable.templates);
@@ -99,30 +95,31 @@ public class GallerySlideFragment extends Fragment {
     /**
      * Sets a bitmap to the fragment and saves it's cacheKey to remove it from the cache when the
      * fragment is detached
-     * @param bitmap The bitmap that this fragment displays
+     *
+     * @param bitmap   The bitmap that this fragment displays
      * @param cacheKey its key into the cache
      */
     public void setBitmap(Bitmap bitmap, String cacheKey) {
         Log.i(TAG, "setBitmap: " + mCacheKey);
-        if(mImageView==null ) {
+        if (mImageView == null) {
             // If the imageview is null, the fragment has probably been detached
             return;
         }
         mImageView.setImageBitmap(bitmap);
-        mCacheKey=cacheKey;
+        mCacheKey = cacheKey;
 
     }
 
     @Override
     public void onAttach(Activity activity) {
-        Log.i(TAG,"onAttach: ");
+        Log.i(TAG, "onAttach: ");
         super.onAttach(activity);
 
     }
 
     @Override
     public void onDetach() {
-        Log.i(TAG,"onDetach: "+mCacheKey);
+        Log.i(TAG, "onDetach: " + mCacheKey);
         BitmapCacheManager.getInstance().remove(mCacheKey);
         super.onDetach();
     }

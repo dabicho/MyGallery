@@ -14,10 +14,10 @@
 
     <TextView
         android:id="@+id/detail_textView"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/detail_icon"
+        android:layout_toEndOf="@id/detail_icon"
         android:height="16dp"
-        android:text="data"/>
+        />
 </RelativeLayout>
 

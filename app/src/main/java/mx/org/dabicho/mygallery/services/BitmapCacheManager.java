@@ -35,10 +35,7 @@ public class BitmapCacheManager {
              * Remove a bitmap from the cache
              * If its referenced 0 times, it should be recycled.
              * Else, it is added to the referenced bitmaps list
-             * @param evicted
-             * @param key
-             * @param oldValue
-             * @param newValue
+             * @see android.util.LruCache#entryRemoved(boolean, Object, Object, Object)
              */
             @Override
             protected synchronized void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {

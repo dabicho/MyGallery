@@ -20,13 +20,11 @@ public abstract class FragmentDrawerActivity extends Activity {
 
     /**
      * This method must return the fragment with the main activity content.
-     * @return
      */
     abstract Fragment getFragment();
 
     /**
      * This method must return the fragment for the drawer
-     * @return
      */
     abstract NavigationDrawerFragment getDrawerFragment();
 
@@ -36,7 +34,7 @@ public abstract class FragmentDrawerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer_fragment);
 
-        mFragmentView =findViewById(R.id.container);
+        mFragmentView = findViewById(R.id.container);
 
         if (savedInstanceState == null) {
 
@@ -45,7 +43,7 @@ public abstract class FragmentDrawerActivity extends Activity {
                     .commit();
 
 
-            mNavigationDrawerFragment=getDrawerFragment();
+            mNavigationDrawerFragment = getDrawerFragment();
             mTitle = getTitle();
 
 
@@ -65,7 +63,6 @@ public abstract class FragmentDrawerActivity extends Activity {
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         );
     }
-
 
 
     @Override
@@ -89,8 +86,6 @@ public abstract class FragmentDrawerActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
 }

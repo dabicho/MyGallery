@@ -14,7 +14,6 @@ public class ImageUtils {
     private static final String TAG = "ImageUtils";
 
 
-
     public static int calculateMaxInSampleSize(BitmapFactory.Options options, int reqWidth,
                                                int reqHeight) {
         final int height = options.outHeight;
@@ -31,9 +30,10 @@ public class ImageUtils {
     }
 
     public static int calculateMinInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, boolean rotate90) {
-        if (rotate90)
+        if (rotate90) { // We invert the parameters order as the image will be rotated on its side
+            //noinspection SuspiciousNameCombination
             return calculateMinInSampleSize(options, reqHeight, reqWidth);
-        else
+        } else
             return calculateMinInSampleSize(options, reqWidth, reqHeight);
     }
 
@@ -53,22 +53,24 @@ public class ImageUtils {
     }
 
     public static int calculateMaxInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, boolean rotate90) {
-        if (rotate90)
+        if (rotate90) { // We invert the parameters order as the image will be rotated on its side
+            //noinspection SuspiciousNameCombination
             return calculateMaxInSampleSize(options, reqHeight, reqWidth);
-        else
+        } else
             return calculateMaxInSampleSize(options, reqWidth, reqHeight);
     }
 
     /**
      * Gives a re-oriented version of the bitmap. The original bitmap is recycled
-     * @param exif
-     * @param bitmap
-     * @return
+     *
+     * @param exif   exif intergace holding the data for the source of the bitmap
+     * @param bitmap the bitmap that will be re-oriented
+     * @return a re-oriented bitmap
      */
     public static Bitmap rotateBitmap(ExifInterface exif, Bitmap bitmap) {
         Matrix lMatrix = new Matrix();
 
-        if(exif==null)
+        if (exif == null)
             return bitmap;
 
         switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {

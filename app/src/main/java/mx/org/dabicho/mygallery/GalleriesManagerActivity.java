@@ -13,7 +13,6 @@ import static android.util.Log.i;
  * Galleries manager activity
  * Pesents a list of galleries and contains a left-hand drawer with options to select what galleries are displayed: All, local (media store), virtual (references to collections of images from local
  * galleries) or saved search queries.
- *
  */
 public class GalleriesManagerActivity extends FragmentDrawerActivity implements GalleriesManagerFragment.OnFragmentInteractionListener, NavigationDrawerFragment.NavigationDrawerCallbacks {
     private static final String TAG = "GalleriesManagerActivity";
@@ -97,9 +96,12 @@ public class GalleriesManagerActivity extends FragmentDrawerActivity implements 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         if (mDrawerFragment != null) {
+
             setTitle(mDrawerFragment.getOption(position));
-            getActionBar().setTitle(mDrawerFragment.getOption(position));
-            i(TAG, "onNavigationDrawerItemSelected: "+mDrawerFragment.getOption(position));
+            if (getActionBar() != null) {
+                getActionBar().setTitle(mDrawerFragment.getOption(position));
+            }
+            i(TAG, "onNavigationDrawerItemSelected: " + mDrawerFragment.getOption(position));
         }
 
     }
