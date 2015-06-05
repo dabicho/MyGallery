@@ -29,43 +29,43 @@ public class GalleryActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getActionBar().setBackgroundDrawable(new ColorDrawable(0xDD000000));
-        Log.d(TAG, "onCreate: onCreate()");
+        Log.v(TAG, "onCreate: onCreate()");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: onStart()");
+        Log.v(TAG, "onStart: onStart()");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: onResume()");
+        Log.v(TAG, "onResume: onResume()");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: onPause()");
+        Log.v(TAG, "onPause: onPause()");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: onStop()");
+        Log.v(TAG, "onStop: onStop()");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: onDestroy()");
+        Log.v(TAG, "onDestroy: onDestroy()");
     }
 
 
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "onRestart: onRestart()");
+        Log.v(TAG, "onRestart: onRestart()");
     }
 }

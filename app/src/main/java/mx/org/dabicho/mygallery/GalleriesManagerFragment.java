@@ -42,7 +42,7 @@ import static android.util.Log.i;
  * interface.
  */
 public class GalleriesManagerFragment extends Fragment implements AbsListView.OnItemClickListener {
-    private static final String TAG = "GalleriesManagerFragment";
+    private static final String TAG = "GalleriesManagerFrag";
 
     /**
      * El tipo de galerías que se están listando
@@ -117,9 +117,9 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                 i(TAG, "getView: Asking for view " + position);
                 GalleryItemViewHolder lViewHolder;
                 if (convertView == null) {
-                    Log.i(TAG, "getView: Creando Nuevo elemento de lista");
+                    Log.d(TAG, "getView: Creando Nuevo elemento de lista");
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
-                            .gallery_manager_item, parent);
+                            .gallery_manager_item, parent, false);
 
                     lViewHolder = new GalleryItemViewHolder();
                     convertView.setTag(lViewHolder);
@@ -181,31 +181,31 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: onStart()");
+        Log.v(TAG, "onStart: onStart()");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: onResume()");
+        Log.v(TAG, "onResume: onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: onPause()");
+        Log.v(TAG, "onPause: onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: onStop()");
+        Log.v(TAG, "onStop: onStop()");
     }
 
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Log.i(TAG, "onConfigurationChanged: onConfigurationChanged()");
+        Log.v(TAG, "onConfigurationChanged: onConfigurationChanged()");
         super.onConfigurationChanged(newConfig);
         int index = mListView.getFirstVisiblePosition();
         ((GridView) mListView).setNumColumns(getResources().getInteger(R.integer
@@ -216,7 +216,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView: onCreateView()");
+        Log.v(TAG, "onCreateView: onCreateView()");
         View view = inflater.inflate(R.layout.fragment_galleries, container, false);
 
         // Set the adapter
@@ -239,7 +239,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             }
         });
         //mListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
-        Log.i(TAG, "onCreateView: DrawingCache" + mListView.getPersistentDrawingCache() +
+        Log.v(TAG, "onCreateView: DrawingCache" + mListView.getPersistentDrawingCache() +
                 " " + mListView.isDrawingCacheEnabled());
 
         return view;
@@ -248,7 +248,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
     @Override
     public void onAttach(Activity activity) {
-        Log.i(TAG, "onAttach: onAttach()");
+        Log.v(TAG, "onAttach: onAttach()");
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
@@ -261,13 +261,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated: onActivityCreated()");
+        Log.v(TAG, "onActivityCreated: onActivityCreated()");
     }
 
 
     @Override
     public void onDetach() {
-        Log.i(TAG, "onDetach: onDetach()");
+        Log.v(TAG, "onDetach: onDetach()");
         super.onDetach();
         mListener = null;
     }
@@ -275,13 +275,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "onDestroyView: onDestroyView");
+        Log.v(TAG, "onDestroyView: onDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: onDestroy()");
+        Log.v(TAG, "onDestroy: onDestroy()");
     }
 
 
@@ -311,7 +311,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
      */
     private void prepareGalleryLoaders() {
         LoaderManager lm = getLoaderManager();
-        i(TAG, "prepareGalleryLoaders: Iniciando loader");
+        Log.d(TAG, "prepareGalleryLoaders: Iniciando loader");
         lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleriesLoaderCallbacks());
     }
 
@@ -446,7 +446,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
 
             mViewHolder.setBitmap(mBitmap);
-            Log.i(TAG, "onPostExecute: increaseRefCount");
+            Log.d(TAG, "onPostExecute: increaseRefCount");
 
             //mGalleries.get(mId).setBitmap(mBitmap);
             super.onPostExecute(galleries);

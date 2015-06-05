@@ -27,8 +27,8 @@ import java.util.List;
  * @see SystemUiHider
  */
 public class GalleryManagerActivity extends Activity {
-    static int click=0;
-    private static final String TAG =  "GalleryManagerActivity";
+    static int click = 0;
+    private static final String TAG = "GalleryManagerActivity";
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -58,13 +58,9 @@ public class GalleryManagerActivity extends Activity {
     private SystemUiHider mSystemUiHider;
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
 
         setContentView(R.layout.activity_gallery_manager);
@@ -118,7 +114,7 @@ public class GalleryManagerActivity extends Activity {
         contentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("TEST","CLICK"+(click++));
+                Log.d("TEST", "CLICK" + (click++));
                 if (TOGGLE_ON_CLICK) {
                     mSystemUiHider.toggle();
                 } else {

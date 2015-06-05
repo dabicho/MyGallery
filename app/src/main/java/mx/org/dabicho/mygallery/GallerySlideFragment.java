@@ -70,7 +70,7 @@ public class GallerySlideFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView: " + mCacheKey);
+        Log.d(TAG, "onCreateView: " + mCacheKey);
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_gallery_slide,
                 container, false);
 
@@ -112,14 +112,14 @@ public class GallerySlideFragment extends Fragment {
 
     @Override
     public void onAttach(Activity activity) {
-        Log.i(TAG, "onAttach: ");
+        Log.d(TAG, "onAttach: ");
         super.onAttach(activity);
 
     }
 
     @Override
     public void onDetach() {
-        Log.i(TAG, "onDetach: " + mCacheKey);
+        Log.d(TAG, "onDetach: " + mCacheKey);
         BitmapCacheManager.getInstance().remove(mCacheKey);
         super.onDetach();
     }

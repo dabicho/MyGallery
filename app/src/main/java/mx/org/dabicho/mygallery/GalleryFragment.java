@@ -39,6 +39,8 @@ import mx.org.dabicho.mygallery.util.GalleryLoader;
 import mx.org.dabicho.mygallery.util.GalleryLoaderUpdateCallbacks;
 
 import static android.util.Log.i;
+import static android.util.Log.v;
+import static android.util.Log.d;
 
 /**
  * Fragment to display a grid of images from a gallery
@@ -92,7 +94,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        i(TAG, "onCreate: onCreate()");
+        v(TAG, "onCreate: onCreate()");
 
         mThumbnailLoader = new ThumbnailLoader<ImageView>(new Handler(), getActivity());
         mThumbnailLoader.setListener(new ThumbnailLoader.Listener<ImageView>() {
@@ -126,7 +128,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
         getActivity().setTitle(mGalleryTitle);
         if(mImages == null)
             mImages = new ArrayList<Image>();
-        i(TAG, "onCreate: for gallery " + mGalleryId + " : " + mGalleryType);
+        d(TAG, "onCreate: for gallery " + mGalleryId + " : " + mGalleryType);
 
         mAdapter = new ArrayAdapter<Image>(getActivity(),
                 android.R.layout.simple_list_item_1, android.R.id.text1,
@@ -185,7 +187,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        i(TAG, "onCreateView: onCreateView()");
+        v(TAG, "onCreateView: onCreateView()");
         mView = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         mImagesGridView = (GridView) mView.findViewById(android.R.id.list);
@@ -231,7 +233,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
      */
     private void prepareGalleryLoaders() {
         LoaderManager lm = getLoaderManager();
-        i(TAG, "prepareGalleryLoaders: Iniciando loader");
+        v(TAG, "prepareGalleryLoaders: Iniciando loader");
         lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleryLoaderCallbacks());
     }
 
@@ -252,7 +254,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        i(TAG, "run: updating DATA");
+                                        d(TAG, "run: updating DATA");
                                         if(mImages != null) {
                                             mImages.clear();
                                         } else {
@@ -280,10 +282,10 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
             if(!mImages.isEmpty()) {
 
-                i(TAG, "onLoadFinished: Lista cargada " + mImages.size());
+                d(TAG, "onLoadFinished: Lista cargada " + mImages.size());
                 mView.findViewById(android.R.id.empty).setVisibility(View.INVISIBLE);
                 mView.findViewById(R.id.loading).setVisibility(View.INVISIBLE);
-                i(TAG, "onLoadFinished: Vista: " + mView.findViewById(android.R.id.empty));
+                d(TAG, "onLoadFinished: Vista: " + mView.findViewById(android.R.id.empty));
             }
             mAdapter.notifyDataSetChanged();
 
@@ -291,7 +293,7 @@ public class GalleryFragment extends Fragment implements AdapterView.OnItemClick
 
         @Override
         public void onLoaderReset(Loader<List<Image>> loader) {
-            Log.i(TAG, "onLoaderReset: onLoaderReset()");
+            Log.v(TAG, "onLoaderReset: onLoaderReset()");
         }
 
 

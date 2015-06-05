@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 import mx.org.dabicho.mygallery.GalleriesManagerFragment;
 
-import static android.util.Log.i;
+import static android.util.Log.*;
 
 /**
  * A gallery defines a group of images.
@@ -106,10 +106,10 @@ public abstract class Gallery {
     public boolean paintCover(GalleriesManagerFragment.GalleryItemViewHolder imageView) {
 
         if (mCover != null) {
-            i(TAG, "paintCover: Cover");
+            v(TAG, "paintCover: Cover");
             return mCover.paintCover(imageView);
         } else {
-            i(TAG, "paintCover: no cover");
+            v(TAG, "paintCover: no cover");
             return false;
         }
     }

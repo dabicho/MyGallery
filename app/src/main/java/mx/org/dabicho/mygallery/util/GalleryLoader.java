@@ -16,6 +16,8 @@ import mx.org.dabicho.mygallery.model.Image;
 
 import static android.util.Log.e;
 import static android.util.Log.i;
+import static android.util.Log.v;
+import static android.util.Log.d;
 
 /**
  * DataLoader for a gallery images
@@ -50,7 +52,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
     @Override
     public List<Image> loadInBackground() {
         boolean stopLoading = false;
-        i(TAG, "loadInBackground: loading gallery " + mGalleryType);
+        d(TAG, "loadInBackground: loading gallery " + mGalleryType);
         Context context = getContext();
         ArrayList<Image> images = new ArrayList<Image>();
         Cursor lCursor = null;
@@ -63,7 +65,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
                         galleryQueryProjection, MediaStore.Images.ImageColumns.BUCKET_ID +
                                 " = ? ", galleryQuerySelectionArgs,
                         MediaStore.Images.ImageColumns.DATA + " asc");
-                i(TAG, "loadInBackground: " + lCursor.getCount());
+                d(TAG, "loadInBackground: " + lCursor.getCount());
 
                 break;
             case ALBUM:
@@ -100,7 +102,7 @@ public class GalleryLoader extends DataLoader<List<Image>> {
             }
             lCursor.close();
         } else {
-            i(TAG, "loadInBackground: there is no cursor");
+            d(TAG, "loadInBackground: there is no cursor");
         }
         return images;
     }
