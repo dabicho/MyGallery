@@ -16,30 +16,30 @@ public class CurrentImageList {
     private String mTitle;
     private int mCurrentPosition;
 
-    public static CurrentImageList getInstance(){
-        if(mCurrentImageList==null) {
+    public static CurrentImageList getInstance() {
+        if (mCurrentImageList == null) {
             mCurrentImageList = new CurrentImageList();
         }
         return mCurrentImageList;
     }
 
-    private CurrentImageList(){
+    private CurrentImageList() {
 
     }
 
     /**
      * Sets the images list
-     * @param images
+     *
+     * @param images the list of images
      */
-    public void setImages(final List<Image> images){
-        mImages= Collections.unmodifiableList(images);
+    public void setImages(final List<Image> images) {
+        mImages = Collections.unmodifiableList(images);
     }
 
     /**
-     *
      * @return an unmodifiable representation of the images list
      */
-    public List<Image> getImages(){
+    public List<Image> getImages() {
         return mImages;
     }
 

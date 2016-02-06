@@ -37,12 +37,12 @@ import static android.util.Log.i;
 
 /**
  * A fragment representing a grid of Galleries.
- *
+ * <p/>
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
 public class GalleriesManagerFragment extends Fragment implements AbsListView.OnItemClickListener {
-    private static final String TAG = "GalleriesManagerFragment";
+    private static final String TAG = "GalleriesManagerFrag";
 
     /**
      * El tipo de galerías que se están listando
@@ -96,12 +96,12 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         super.onCreate(savedInstanceState);
 
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        if(mGalleries == null)
+        if (mGalleries == null)
             mGalleries = new ArrayList<Gallery>();
 
         // TODO: Change Adapter to display your content
@@ -116,10 +116,10 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
                 i(TAG, "getView: Asking for view " + position);
                 GalleryItemViewHolder lViewHolder;
-                if(convertView == null) {
-                    Log.i(TAG, "getView: Creando Nuevo elemento de lista");
+                if (convertView == null) {
+                    Log.d(TAG, "getView: Creando Nuevo elemento de lista");
                     convertView = getActivity().getLayoutInflater().inflate(R.layout
-                            .gallery_manager_item, null);
+                            .gallery_manager_item, parent, false);
 
                     lViewHolder = new GalleryItemViewHolder();
                     convertView.setTag(lViewHolder);
@@ -131,7 +131,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
                 /* ANIMACION */
                 AnimationSet set = new AnimationSet(true);
                 TranslateAnimation animation;
-                if(position >= lastPosition)
+                if (position >= lastPosition)
                     animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF,
                             0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
                             Animation.RELATIVE_TO_SELF, 1.0f,
@@ -158,14 +158,14 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
                 lViewHolder.getTextView().setText(getItem(position).getName() + ": (" + getItem
                         (position).getCount() + ")");
-                if(!getItem(position).paintCover(lViewHolder)) {
+                if (!getItem(position).paintCover(lViewHolder)) {
                     i(TAG, "getView: starting task for gallery " + getItem(position).getName()
                             + " " + lViewHolder.getImageView().getWidth() + " x " +
                             lViewHolder.getImageView().getHeight());
                     i(TAG, "getView: Tam contenido: " + convertView.getWidth() + " x " + convertView.getHeight());
                     //lViewHolder.getImageView().setImageResource(R.drawable.brian_up_close);
                     new GalleryItemTask(position, lViewHolder)
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                 }
 
@@ -181,48 +181,48 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: onStart()");
+        Log.v(TAG, "onStart: onStart()");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: onResume()");
+        Log.v(TAG, "onResume: onResume()");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: onPause()");
+        Log.v(TAG, "onPause: onPause()");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        Log.d(TAG, "onStop: onStop()");
+        Log.v(TAG, "onStop: onStop()");
     }
 
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        Log.i(TAG, "onConfigurationChanged: onConfigurationChanged()");
+        Log.v(TAG, "onConfigurationChanged: onConfigurationChanged()");
         super.onConfigurationChanged(newConfig);
-        int index = ((GridView) mListView).getFirstVisiblePosition();
+        int index = mListView.getFirstVisiblePosition();
         ((GridView) mListView).setNumColumns(getResources().getInteger(R.integer
                 .gallery_grid_manager_cols));
-        ((GridView) mListView).setSelection(index);
+        mListView.setSelection(index);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView: onCreateView()");
+        Log.v(TAG, "onCreateView: onCreateView()");
         View view = inflater.inflate(R.layout.fragment_galleries, container, false);
 
         // Set the adapter
 
         mListView = (AbsListView) view.findViewById(android.R.id.list);
-        ((AdapterView<ListAdapter>) mListView).setAdapter(mAdapter);
+        mListView.setAdapter(mAdapter);
 
         // Set OnItemClickListener so we can be notified on item clicks
         mListView.setOnItemClickListener(this);
@@ -239,7 +239,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
             }
         });
         //mListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
-        Log.i(TAG, "onCreateView: DrawingCache" + mListView.getPersistentDrawingCache() +
+        Log.v(TAG, "onCreateView: DrawingCache" + mListView.getPersistentDrawingCache() +
                 " " + mListView.isDrawingCacheEnabled());
 
         return view;
@@ -248,11 +248,11 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
     @Override
     public void onAttach(Activity activity) {
-        Log.i(TAG, "onAttach: onAttach()");
+        Log.v(TAG, "onAttach: onAttach()");
         super.onAttach(activity);
         try {
             mListener = (OnFragmentInteractionListener) activity;
-        } catch(ClassCastException e) {
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
@@ -261,13 +261,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated: onActivityCreated()");
+        Log.v(TAG, "onActivityCreated: onActivityCreated()");
     }
 
 
     @Override
     public void onDetach() {
-        Log.i(TAG, "onDetach: onDetach()");
+        Log.v(TAG, "onDetach: onDetach()");
         super.onDetach();
         mListener = null;
     }
@@ -275,19 +275,19 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.d(TAG, "onDestroyView: onDestroyView");
+        Log.v(TAG, "onDestroyView: onDestroyView");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: onDestroy()");
+        Log.v(TAG, "onDestroy: onDestroy()");
     }
 
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        if(null != mListener) {
+        if (null != mListener) {
             // Notify the active callbacks interface (the activity, if the
             // fragment is attached to one) that an item has been selected.
             //mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
@@ -311,7 +311,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
      */
     private void prepareGalleryLoaders() {
         LoaderManager lm = getLoaderManager();
-        i(TAG, "prepareGalleryLoaders: Iniciando loader");
+        Log.d(TAG, "prepareGalleryLoaders: Iniciando loader");
         lm.initLoader(IdConstants.GALLERY_LOADER, null, new GalleriesLoaderCallbacks());
     }
 
@@ -328,13 +328,13 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
         @Override
         public void onLoadFinished(Loader<List<Gallery>> loader, List<Gallery> data) {
-            if(mGalleries != null) {
+            if (mGalleries != null) {
                 mGalleries.clear();
 
             } else
                 mGalleries = new ArrayList<Gallery>();
             mGalleries.addAll(data);
-            for(Gallery lGallery : data) {
+            for (Gallery lGallery : data) {
                 i(TAG, "onLoadFinished: " + lGallery.getName());
             }
 
@@ -399,12 +399,12 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         }
 
         public void setBitmap(Bitmap bitmap) {
-            if(bitmap == null) {
+            if (bitmap == null) {
                 i(TAG, "setBitmap: colocando bitmap null");
             }
-            if(mBitmap != null)
+            if (mBitmap != null)
                 i(TAG, "setBitmap: bitmap anterior no nulo");
-            if(mImageView != null) {
+            if (mImageView != null) {
                 mImageView.setImageBitmap(bitmap);
                 mBitmap = bitmap;
             }
@@ -438,7 +438,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
         @Override
         protected void onPostExecute(Gallery galleries) {
 
-            if(mId != mViewHolder.getId()) {
+            if (mId != mViewHolder.getId()) {
                 // Si ambos id son diferentes, no se debe actualizar la imagen
                 return;
             }
@@ -446,7 +446,7 @@ public class GalleriesManagerFragment extends Fragment implements AbsListView.On
 
 
             mViewHolder.setBitmap(mBitmap);
-            Log.i(TAG, "onPostExecute: increaseRefCount");
+            Log.d(TAG, "onPostExecute: increaseRefCount");
 
             //mGalleries.get(mId).setBitmap(mBitmap);
             super.onPostExecute(galleries);

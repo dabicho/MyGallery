@@ -28,6 +28,8 @@ import mx.org.dabicho.mygallery.util.RenderScriptUtils;
 import static android.util.Log.e;
 import static android.util.Log.i;
 import static android.util.Log.w;
+import static android.util.Log.v;
+import static android.util.Log.d;
 
 /**
  * Cubierta que consta de un simple ImageView correspondiente a una imagen en el content provider
@@ -64,10 +66,10 @@ public class SimpleCover extends Cover {
     public boolean paintCover(GalleriesManagerFragment.GalleryItemViewHolder galleryItemViewHolder) {
         Bitmap lBitmap;
 
-        i(TAG, "paintCover: ");
+        v(TAG, "paintCover: paintCover()");
         // Si tiene un bitmap, se debe de eliminar su referencia
         if (galleryItemViewHolder.getBitmap() != null) {
-            i(TAG, "SimpleCover: hay bitmap anterior");
+            d(TAG, "SimpleCover: hay bitmap anterior");
             // Si el bitmap que se va a pintar y el del cache son el mismo, no se hace nada
             if (mId != null && galleryItemViewHolder.getBitmap() == BitmapCacheManager.getInstance().get(mId)) {
                 return true;
@@ -78,17 +80,17 @@ public class SimpleCover extends Cover {
         }
         if (mId == null || (lBitmap = BitmapCacheManager.getInstance().get(mId)) == null) {
             // Si no hay id o no hay cache, se coloca la plantilla
-            i(TAG, "SimpleCover: mId " + mId + " Tam: " + galleryItemViewHolder.getImageView().getWidth()
+            d(TAG, "SimpleCover: mId " + mId + " Tam: " + galleryItemViewHolder.getImageView().getWidth()
                     + " x " + galleryItemViewHolder.getImageView().getHeight());
             galleryItemViewHolder.getImageView().setImageResource(R.drawable.templates);
 
             return false;
 
         } else { // Se coloca el resultado del cache e incrementa su referencia
-            i(TAG, "SimpleCover: Se pinta con cache");
+            d(TAG, "SimpleCover: Se pinta con cache");
             galleryItemViewHolder.setBitmap(lBitmap);
 
-            Log.i(TAG,"paintCover: increaseRefCount");
+            Log.d(TAG, "paintCover: increaseRefCount");
             return true;
         }
 
@@ -103,12 +105,12 @@ public class SimpleCover extends Cover {
             FileInputStream fis = mContext.openFileInput(creaNombreArchivo());
             lBitmap = BitmapFactory.decodeStream(fis);
             BitmapCacheManager.getInstance().put(creaNombreArchivo(), lBitmap);
-            i(TAG, "generateCover: Se leyó archivo y se agrego a cache como: " + creaNombreArchivo());
+            d(TAG, "generateCover: Se leyó archivo y se agrego a cache como: " + creaNombreArchivo());
             return lBitmap;
         } catch (FileNotFoundException fnfe) {
             // NADA
         }
-        i(TAG, "generateCover: size: " + preferredWidth + " x " + preferredHeight);
+        d(TAG, "generateCover: size: " + preferredWidth + " x " + preferredHeight);
 
         String[] queryProjection = {
                 MediaStore.Images.ImageColumns.DATA, MediaStore.Images.ImageColumns.TITLE};
@@ -119,18 +121,18 @@ public class SimpleCover extends Cover {
                 selectionArgs, MediaStore.Images.ImageColumns.TITLE);
 
         lCursor.moveToFirst();
-        i(TAG, "generateCover: FILE0: " + Thread.currentThread().getId() + " " + lCursor.getString(0));
+        d(TAG, "generateCover: FILE0: " + Thread.currentThread().getId() + " " + lCursor.getString(0));
         mId = creaNombreArchivo();
 
-        i(TAG, "generateCover: gID " + mGalleryId + " : " + lCursor.getCount());
-        lBitmap = generateSimpleCoverBitmap( lCursor.getString(0),
+        d(TAG, "generateCover: gID " + mGalleryId + " : " + lCursor.getCount());
+        lBitmap = generateSimpleCoverBitmap(lCursor.getString(0),
                 preferredWidth,
                 preferredHeight);
         if (lCursor.getString(0) == null || lBitmap == null) {
-            i(TAG, "generateCover: nulos: " + lCursor.getString(0) + "-" + lBitmap);
+            d(TAG, "generateCover: nulos: " + lCursor.getString(0) + "-" + lBitmap);
         } else {
             BitmapCacheManager.getInstance().put(creaNombreArchivo(), lBitmap);
-            i(TAG, "generateCover: Nuevo bitmap en cache: "+creaNombreArchivo());
+            d(TAG, "generateCover: Nuevo bitmap en cache: " + creaNombreArchivo());
         }
         lCursor.close();
         return lBitmap;
@@ -148,8 +150,8 @@ public class SimpleCover extends Cover {
     public Bitmap generateSimpleCoverBitmap(String source, int width, int height) {
         if (source == null || width <= 0 || height <= 0)
             return null;
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
         int dWidth;
         int dHeight;
         Bitmap lBitmap;
@@ -159,7 +161,7 @@ public class SimpleCover extends Cover {
         int thumbnailWidth;
         int thumbnailHeight;
 
-        i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + width + " x " + height);
+        d(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + width + " x " + height);
         BitmapFactory.Options lOptions = new BitmapFactory.Options();
         lOptions.inJustDecodeBounds = true;
 
@@ -167,7 +169,7 @@ public class SimpleCover extends Cover {
         ExifInterface exif = null;
         try {
             exif = new ExifInterface(source);
-            i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " orientación: " + exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL));
+            d(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " orientación: " + exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL));
             switch (exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL)) {
                 case ExifInterface.ORIENTATION_ROTATE_90:
                 case ExifInterface.ORIENTATION_ROTATE_270:
@@ -183,7 +185,7 @@ public class SimpleCover extends Cover {
                     e);
             lOptions.inSampleSize = ImageUtils.calculateMaxInSampleSize(lOptions, width, height);
         }
-        i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lOptions.outWidth + "" +
+        d(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lOptions.outWidth + "" +
                 " x" + " " + lOptions.outHeight);
 
         lOptions.inJustDecodeBounds = false;
@@ -196,14 +198,14 @@ public class SimpleCover extends Cover {
 
         if (thumbnailWidth > 1F / 3F * (float) width) {
             thumbnailWidth = (int) (1F / 3F * (float) width);
-            thumbnailHeight=(int)((float)lBitmap.getHeight()/(float)lBitmap.getWidth()*
+            thumbnailHeight = (int) ((float) lBitmap.getHeight() / (float) lBitmap.getWidth() *
                     1F / 3F * (float) width);
         } else {
             thumbnailHeight = (int) (5F / 7F * (float) height);
         }
 
 
-        i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lBitmap.getWidth() +
+        d(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + lBitmap.getWidth() +
                 " x " +
                 lBitmap.getHeight() + " " + lOptions.inSampleSize);
         dHeight = height * lBitmap.getWidth() / width;
@@ -247,10 +249,10 @@ public class SimpleCover extends Cover {
         paint.setColor(Color.BLACK);
         canvas.drawRect(thumbnailStartX + 1, thumbnailStartY + 1, thumbnailStartX +
                 thumbnailWidth - 1, thumbnailStartY + thumbnailHeight - 1, paint);
-        canvas.drawBitmap(thumbnailBitmap,thumbnailStartX+2,thumbnailStartY+2,paint);
+        canvas.drawBitmap(thumbnailBitmap, thumbnailStartX + 2, thumbnailStartY + 2, paint);
 
         System.gc();
-        i(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + croppedBitmap.getWidth()
+        d(TAG, "generateSimpleCoverBitmap: " + Thread.currentThread().getId() + " " + croppedBitmap.getWidth()
                 + " x " +
                 "" + croppedBitmap
                 .getHeight());
@@ -263,7 +265,7 @@ public class SimpleCover extends Cover {
         } catch (IOException ioe) {
             e(TAG, "generateSimpleCoverBitmap: No fué posible cerrar el archivo", ioe);
         }
-        
+
         return croppedBitmap;
     }
 
@@ -274,7 +276,7 @@ public class SimpleCover extends Cover {
     }
 
     private String creaNombreArchivo() {
-        i(TAG, "creaNombreArchivo: "+CoverType.SimpleCover.name() + "." +
+        v(TAG, "creaNombreArchivo: " + CoverType.SimpleCover.name() + "." +
                 mGalleryId + ".jpg");
         return CoverType.SimpleCover.name() + "." +
                 mGalleryId + ".jpg";

@@ -14,7 +14,7 @@ import mx.org.dabicho.mygallery.util.ImageUtils;
 import mx.org.dabicho.mygallery.util.StringUtils;
 
 import static android.util.Log.e;
-import static android.util.Log.i;
+import static android.util.Log.v;
 
 /**
  * Created by dabicho on 11/13/14.
@@ -183,7 +183,7 @@ public class Image {
         }
     }
 
-    public String getLocation(Context context){
+    public String getLocation(Context context) {
         return StringUtils.getCountryCity(context, mLatLong);
     }
 

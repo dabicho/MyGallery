@@ -1,5 +1,6 @@
 package mx.org.dabicho.mygallery;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -34,6 +35,7 @@ import mx.org.dabicho.mygallery.util.CurrentImageList;
 import mx.org.dabicho.mygallery.util.ImageUtils;
 
 import static android.util.Log.i;
+import static android.util.Log.d;
 import static android.util.Log.v;
 
 
@@ -119,7 +121,8 @@ public class GallerySlideActivity extends Activity {
 
     void updateDataView(Image image) {
         mImageDataView.removeAllViews();
-        View view = getLayoutInflater().inflate(R.layout.image_detail, null);
+
+        @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.image_detail, null);
 
         TextView textView;
 
@@ -156,7 +159,7 @@ public class GallerySlideActivity extends Activity {
         @Override
         public Fragment getItem(int i) {
 
-            i(TAG, "getItem: " + i + ": " + mViewPager.getWidth() + "x" + mViewPager.getHeight());
+            d(TAG, "getItem: " + i + ": " + mViewPager.getWidth() + "x" + mViewPager.getHeight());
             GallerySlideFragment gallerySlideFragment;
             gallerySlideFragment = GallerySlideFragment.newInstance(i);
             CurrentImageList.getInstance().setCurrentPosition(i);
@@ -168,9 +171,9 @@ public class GallerySlideActivity extends Activity {
             if (bitmap == null) {
 
                 ImageLoader imageLoader = new ImageLoader(i, gallerySlideFragment);
-                i(TAG, "getItem: Starting imageLoader");
+                d(TAG, "getItem: Starting imageLoader");
                 imageLoader.execute();
-                i(TAG, "getItem: imageLoader started");
+                d(TAG, "getItem: imageLoader started");
             } else
                 gallerySlideFragment.setBitmap(bitmap, CurrentImageList.getInstance().getImages()
                         .get(i).getImageDataStream());
@@ -211,10 +214,10 @@ public class GallerySlideActivity extends Activity {
 
             Point preferedSize = new Point();
             GallerySlideActivity.this.getWindowManager().getDefaultDisplay().getSize(preferedSize);
-            i(TAG, "doInBackground: " + mImageIdx);
+            d(TAG, "doInBackground: " + mImageIdx);
 
 
-            i(TAG, "doInBackground: " + mImage.getImageDataStream());
+            d(TAG, "doInBackground: " + mImage.getImageDataStream());
             Bitmap bitmap = BitmapCacheManager.getInstance().get(mImage.getImageDataStream());
 
 
@@ -232,7 +235,7 @@ public class GallerySlideActivity extends Activity {
                                 preferedSize.x, preferedSize.y, false));
 
 
-                i(TAG, "onCreateView: SampleSize: " + lOptions.inSampleSize);
+                d(TAG, "onCreateView: SampleSize: " + lOptions.inSampleSize);
                 lOptions.inJustDecodeBounds = false;
                 if (exif != null)
                     bitmap = ImageUtils.rotateBitmap(exif,
@@ -271,7 +274,7 @@ public class GallerySlideActivity extends Activity {
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            i(TAG, "onSingleTapConfirmed: ");
+            v(TAG, "onSingleTapConfirmed: ");
             mDataVisible = !mDataVisible;
             if (mDataVisible) {
                 updateDataView(CurrentImageList.getInstance().getImages().get(mViewPager.getCurrentItem()));
@@ -285,7 +288,7 @@ public class GallerySlideActivity extends Activity {
         @Override
         public boolean onDoubleTap(MotionEvent e) {
 
-            i(TAG, "onDoubleTap: ");
+            v(TAG, "onDoubleTap: ");
             return true;
         }
     }
