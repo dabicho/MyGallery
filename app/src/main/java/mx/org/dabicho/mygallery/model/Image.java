@@ -150,6 +150,7 @@ public class Image {
             ExifInterface exif = new ExifInterface(mImageDataStream);
             // This Tag posibly refers to exif DateTimeOriginal
             if (!exifLoaded) {
+
                 mDateTimeOriginal = StringUtils.formatExifDateTime(context, exif.getAttribute(ExifInterface.TAG_DATETIME));
 
 
